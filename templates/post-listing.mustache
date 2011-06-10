@@ -1,0 +1,11 @@
+<h1>Blog Entries</h1>
+<div id="PostListing">
+	<ul>
+		{{#Posts}}
+		<li>
+			<p><a href="/post/{{Id}}">{{Title}}</a></p>
+			<p>{{Date}}</p>
+		</li>
+		{{/Posts}}
+	</ul>
+</div>

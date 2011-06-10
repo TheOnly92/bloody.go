@@ -40,11 +40,11 @@ func readPost(postId string) string {
 	
 	var next *Post
 	var last *Post
-	err = c.Find(bson.M{"_id": bson.M{"$gt":bson.ObjectIdHex(postId)}}).One(&next)
+	err = c.Find(bson.M{"timestamp": bson.M{"$gt":result.Timestamp}}).Sort(bson.M{"timestamp":1}).One(&next)
 	if err != nil && err != mgo.NotFound {
 		panic(err)
 	}
-	err = c.Find(bson.M{"_id": bson.M{"$lt":bson.ObjectIdHex(postId)}}).One(&last)
+	err = c.Find(bson.M{"timestamp": bson.M{"$lt":result.Timestamp}}).Sort(bson.M{"timestamp":-1}).One(&last)
 	if err != nil && err != mgo.NotFound {
 		panic(err)
 	}
@@ -57,4 +57,21 @@ func readPost(postId string) string {
 	
 	output := mustache.RenderFile("templates/view-post.mustache", viewVars)
 	return layout.Render(map[string]interface{} {"Body": output, "Title": map[string]string {"Name": result.Title}})
+}
+
+func listPosts() string {
+	c := mSession.DB(dbname).C("posts")
+	var result *Post
+	results := []map[string]string{}
+	err := c.Find(nil).Sort(bson.M{"timestamp":-1}).For(&result, func() os.Error {
+		t := time.SecondsToLocalTime(result.Timestamp)
+		results = append(results, map[string]string {"Title":result.Title, "Date":t.Format("2006 Jan 02 15:04"), "Id": objectIdHex(result.Id.String())})
+		return nil
+	})
+	if err != nil {
+		panic(err)
+	}
+	
+	output := mustache.RenderFile("templates/post-listing.mustache", map[string]interface{} {"Posts": results})
+	return layout.Render(map[string]interface{} {"Body": output, "Title": map[string]string {"Name": "Post Listing"}})
 }
