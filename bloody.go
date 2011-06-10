@@ -5,7 +5,6 @@ import (
 	"launchpad.net/mgo"
 	"os"
 	"./mustache"
-	"launchpad.net/gobson/bson"
 	"regexp"
 	"./session"
 )
@@ -18,13 +17,6 @@ var (
 type User struct {
 	Username	string
 	Password	string
-}
-
-type Post struct {
-	Id			bson.ObjectId "_id/c"
-	Title		string
-	Content		string
-	Timestamp	int64
 }
 
 var mSession *mgo.Session
