@@ -1,0 +1,11 @@
+<h1>Create New Post</h1>
+<form method="post" action="/admin/post/new">
+	<label for="title">Title</label>
+	<input type="text" id="title" name="title" /><br />
+	<label for="content">Content</label><br />
+	<textarea id="content" name="content"></textarea><br />
+	<input type="submit" value="Post!" />
+</form>
+<script type="text/javascript">
+$('#content').cleditor()[0].focus();
+</script>

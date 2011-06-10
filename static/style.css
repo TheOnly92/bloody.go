@@ -1,0 +1,17 @@
+#Body {
+	margin: 10px auto;
+	width: 600px;
+}
+
+#Body h1 {
+	font-size: 20px;
+	margin: 5px 0;
+}
+
+#Header h1 {
+	font-size: 26px;
+}
+
+#Date {
+	font-size: 10px;
+}
