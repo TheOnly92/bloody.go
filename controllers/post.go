@@ -21,7 +21,7 @@ func adminLoginGet(ctx *web.Context) string {
 		return ""
 	}
 	output := mustache.RenderFile("templates/admin-login.mustache")
-	return layout.Render(map[string]string {"Body": output})
+	return layout.Render(map[string]interface{} {"Body": output, "Title": map[string]string {"Name": "Login"}})
 }
 
 func adminLoginPost(ctx *web.Context) {
@@ -48,7 +48,7 @@ func newPostGet(ctx *web.Context) string {
 		return ""
 	}
 	output := mustache.RenderFile("templates/new-post.mustache")
-	return layout.Render(map[string]string {"Body": output})
+	return layout.Render(map[string]interface{} {"Body": output, "Title": map[string]string {"Name": "New Post"}})
 }
 
 func newPostPost(ctx *web.Context) {
@@ -87,7 +87,7 @@ func listPost(ctx *web.Context) string {
 	}
 	
 	output := mustache.RenderFile("templates/list-post.mustache", map[string][]map[string]string {"posts":results})
-	return layout.Render(map[string]string {"Body": output})
+	return layout.Render(map[string]interface{} {"Body": output, "Title": map[string]string {"Name": "List Posts"}})
 }
 
 func editPostGet(ctx *web.Context, postId string) string {
@@ -105,7 +105,7 @@ func editPostGet(ctx *web.Context, postId string) string {
 	}
 	
 	output := mustache.RenderFile("templates/edit-post.mustache", map[string]string {"Title":result.Title, "Content":result.Content, "id":objectIdHex(result.Id.String())})
-	return layout.Render(map[string]string {"Body": output})
+	return layout.Render(map[string]interface{} {"Body": output, "Title": map[string]string {"Name": "Edit Post"}})
 }
 
 func editPostPost(ctx *web.Context, postId string) {
