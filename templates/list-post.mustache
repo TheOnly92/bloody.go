@@ -1,6 +1,11 @@
 <h1>List of Your Posts</h1>
-<ul>
+<p>[ <a href="/admin/post/new">New Post</a> ]</p>
+<table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size: 13px;">
 	{{#posts}}
-	<li><a href="/admin/post/edit/{{id}}">{{Title}}</a> [ <a href="/admin/post/del/{{id}}">Del</a> ]</li>
+	<tr>
+		<td style="width: 130px">{{Date}}</td>
+		<td><a href="/admin/post/edit/{{id}}">{{Title}}</a></td>
+		<td>[ <a href="/admin/post/del/{{id}}">Del</a> ]</td>
+	</tr>
 	{{/posts}}
-</ul>
+</table>

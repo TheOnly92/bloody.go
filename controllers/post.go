@@ -79,7 +79,7 @@ func listPost(ctx *web.Context) string {
 	results := []map[string]string{}
 	err := c.Find(nil).Sort(bson.M{"timestamp":-1}).For(&result, func() os.Error {
 		t := time.SecondsToLocalTime(result.Timestamp)
-		results = append(results, map[string]string {"id":objectIdHex(result.Id.String()), "Title":result.Title, "Date":t.Format("2006 Jan 02 15:04")})
+		results = append(results, map[string]string {"id":objectIdHex(result.Id.String()), "Title":result.Title, "Date":t.Format("02/01/2006 15:04")})
 		return nil
 	})
 	if err != nil {

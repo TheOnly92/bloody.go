@@ -1,11 +1,32 @@
+body {
+	font-family: "Lucida Grande","Lucida Sans Unicode",Helvetica,Arial,Verdana,sans-serif;
+}
+
 #Body {
 	margin: 10px auto;
 	width: 600px;
 }
 
+p {
+	margin: 5px 0;
+}
+
+a, a:visited {
+	color: #0044AA;
+}
+
+a:hover {
+	text-decoration: none;
+}
+
 #Body h1 {
 	font-size: 20px;
-	margin: 5px 0;
+	margin: 8px 0;
+}
+
+#Body h1 a, #Body h1 a:visited {
+	color: #000000;
+	text-decoration: none;
 }
 
 #Header h1 {
@@ -14,4 +35,20 @@
 
 #Date {
 	font-size: 10px;
+}
+
+#Post {
+	border-bottom: solid 1px black;
+	padding: 5px 2px;
+	margin: 2px 0;
+}
+
+#Footer {
+	font-size: 10px;
+}
+
+label {
+	float: left;
+	display: block;
+	width: 100px;
 }

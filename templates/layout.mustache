@@ -1,17 +1,21 @@
 <html>
 	<head>
-		<title>{{#Title}}{{Name}} - {{/Title}}Blog with Go</title>
+		<title>{{#Title}}{{Name}} - {{/Title}}Bloody.go</title>
 		<link rel="stylesheet" href="/style.css" />
 		<link rel="stylesheet" href="/jquery.cleditor.css">
 		<script src="http://code.jquery.com/jquery-1.6.1.min.js" type="text/javascript"></script>
 		<script src="/jquery.cleditor.min.js" type="text/javascript"></script>
+		<script src="/jquery.cleditor.xhtml.min.js" type="text/javascript"></script>
 	</head>
 	<body>
 		<div id="Body">
 			<div id="Header">
-				<h1>Bloody.go</h1>
+				<h1><a href="/">Bloody.go</a></h1>
 			</div>
 			{{{Body}}}
+			<div id="Footer">
+				<p>Powered by <a href="https://github.com/TheOnly92/bloody.go">bloody.go</a></p>
+			</div>
 		</div>
 	</body>
 </html>
