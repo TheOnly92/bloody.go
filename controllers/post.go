@@ -17,7 +17,7 @@ func adminLoginGet(ctx *web.Context) string {
 	sessionH := session.Start(ctx, h)
 	defer sessionH.Save()
 	if sessionH.Data["logged"] != nil {
-		ctx.Redirect(301, "/admin/post/list")
+		ctx.Redirect(302, "/admin/post/list")
 		return ""
 	}
 	output := mustache.RenderFile("templates/admin-login.mustache")
@@ -28,7 +28,7 @@ func adminLoginPost(ctx *web.Context) {
 	sessionH := session.Start(ctx, h)
 	defer sessionH.Save()
 	if sessionH.Data["logged"] != nil {
-		ctx.Redirect(301, "/admin/post/list")
+		ctx.Redirect(302, "/admin/post/list")
 		return
 	}
 	if ctx.Params["username"] == "admin" && ctx.Params["password"] == "123456" {
@@ -37,14 +37,14 @@ func adminLoginPost(ctx *web.Context) {
 		h.Write([]byte(strconv.Itoa64(t.Seconds())))
 		sessionH.Data["logged"] = hex.EncodeToString(h.Sum())
 	}
-	ctx.Redirect(301, "/admin/post/list")
+	ctx.Redirect(302, "/admin/post/list")
 }
 
 func newPostGet(ctx *web.Context) string {
 	sessionH := session.Start(ctx, h)
 	defer sessionH.Save()
 	if sessionH.Data["logged"] == nil {
-		ctx.Redirect(301, "/admin/login")
+		ctx.Redirect(302, "/admin/login")
 		return ""
 	}
 	output := mustache.RenderFile("templates/new-post.mustache")
@@ -55,7 +55,7 @@ func newPostPost(ctx *web.Context) {
 	sessionH := session.Start(ctx, h)
 	defer sessionH.Save()
 	if sessionH.Data["logged"] == nil {
-		ctx.Redirect(301, "/admin/login")
+		ctx.Redirect(302, "/admin/login")
 		return
 	}
 	c := mSession.DB(dbname).C("posts")
@@ -64,14 +64,14 @@ func newPostPost(ctx *web.Context) {
 	if err != nil {
 		panic(err)
 	}
-	ctx.Redirect(301, "/admin/post/list")
+	ctx.Redirect(302, "/admin/post/list")
 }
 
 func listPost(ctx *web.Context) string {
 	sessionH := session.Start(ctx, h)
 	defer sessionH.Save()
 	if sessionH.Data["logged"] == nil {
-		ctx.Redirect(301, "/admin/login")
+		ctx.Redirect(302, "/admin/login")
 		return ""
 	}
 	c := mSession.DB(dbname).C("posts")
@@ -94,7 +94,7 @@ func editPostGet(ctx *web.Context, postId string) string {
 	sessionH := session.Start(ctx, h)
 	defer sessionH.Save()
 	if sessionH.Data["logged"] == nil {
-		ctx.Redirect(301, "/admin/login")
+		ctx.Redirect(302, "/admin/login")
 		return ""
 	}
 	c := mSession.DB(dbname).C("posts")
@@ -112,7 +112,7 @@ func editPostPost(ctx *web.Context, postId string) {
 	sessionH := session.Start(ctx, h)
 	defer sessionH.Save()
 	if sessionH.Data["logged"] == nil {
-		ctx.Redirect(301, "/admin/login")
+		ctx.Redirect(302, "/admin/login")
 		return
 	}
 	c := mSession.DB(dbname).C("posts")
@@ -125,14 +125,14 @@ func editPostPost(ctx *web.Context, postId string) {
 	if err != nil {
 		panic(err)
 	}
-	ctx.Redirect(301, "/admin/post/list")
+	ctx.Redirect(302, "/admin/post/list")
 }
 
 func delPost(ctx *web.Context, postId string) {
 	sessionH := session.Start(ctx, h)
 	defer sessionH.Save()
 	if sessionH.Data["logged"] == nil {
-		ctx.Redirect(301, "/admin/login")
+		ctx.Redirect(302, "/admin/login")
 		return
 	}
 	c := mSession.DB(dbname).C("posts")
@@ -140,5 +140,5 @@ func delPost(ctx *web.Context, postId string) {
 	if err != nil {
 		panic(err)
 	}
-	ctx.Redirect(301, "/admin/post/list")
+	ctx.Redirect(302, "/admin/post/list")
 }

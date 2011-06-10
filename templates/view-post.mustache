@@ -1,0 +1,23 @@
+<div id="Post" style="border-bottom: none">
+	<div style="font-size: 12px; width: 300px; margin: 0px auto;">
+		{{#Last}}
+		<span style="float: left;"><a href="/post/{{Last}}">&laquo; Last Entry</a></span>
+		{{/Last}}
+		{{#Next}}
+		<span style="float: right;"><a href="/post/{{Next}}">Next Entry &raquo;</a></span>
+		{{/Next}}
+	</div>
+	<div style="clear: both;"></div>
+	<h1>{{Title}}</h1>
+	<p id="Date"><a href="/post/{{Id}}">Published on {{Date}}</a></p>
+	<div id="Content">{{{Content}}}</div>
+	<div style="font-size: 12px; width: 300px; margin: 10px auto;">
+		{{#Last}}
+		<span style="float: left;"><a href="/post/{{Last}}">&laquo; Last Entry</a></span>
+		{{/Last}}
+		{{#Next}}
+		<span style="float: right;"><a href="/post/{{Next}}">Next Entry &raquo;</a></span>
+		{{/Next}}
+	</div>
+	<div style="clear: both;"></div>
+</div>

@@ -43,6 +43,10 @@ a:hover {
 	margin: 2px 0;
 }
 
+#Post h1 {
+	border-bottom: solid 1px black;
+}
+
 #Footer {
 	font-size: 10px;
 }

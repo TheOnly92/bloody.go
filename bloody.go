@@ -58,6 +58,7 @@ func main() {
 	h.SetSession(mSession)
 	web.Config = &web.ServerConfig{"./static","0.0.0.0",9999,"98uarpouaskdjiu4231",true}
 	web.Get("/", index)
+	web.Get("/post/([A-Za-z0-9]+)", readPost)
 	web.Get("/admin/post/new", newPostGet)
 	web.Post("/admin/post/new", newPostPost)
 	web.Get("/admin/post/list", listPost)
