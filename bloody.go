@@ -52,6 +52,7 @@ func main() {
 	web.Get("/", index)
 	web.Get("/post/list", listPosts)
 	web.Get("/post/([A-Za-z0-9]+)", readPost)
+	web.Get("/admin", adminIndexGet)
 	web.Get("/admin/post/new", newPostGet)
 	web.Post("/admin/post/new", newPostPost)
 	web.Get("/admin/post/list", listPost)

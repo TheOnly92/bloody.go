@@ -11,6 +11,17 @@ import (
 	"encoding/hex"
 )
 
+func adminIndexGet(ctx *web.Context) string {
+	sessionH := session.Start(ctx, h)
+	defer sessionH.Save()
+	if sessionH.Data["logged"] != nil {
+		ctx.Redirect(302, "/admin/post/list")
+		return ""
+	}
+	ctx.Redirect(302, "/admin/login")
+	return ""
+}
+
 func adminLoginGet(ctx *web.Context) string {
 	sessionH := session.Start(ctx, h)
 	defer sessionH.Save()
