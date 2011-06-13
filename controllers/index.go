@@ -6,7 +6,7 @@ import (
 )
 
 func index() string {
-	p := PostModelInit(mSession.DB(dbname).C("posts"))
+	p := PostModelInit(mSession.DB(config.Get("mongodb")).C("posts"))
 	results := p.FrontPage()
 	
 	output := mustache.RenderFile("templates/post.mustache", map[string][]map[string]string {"posts":results})
@@ -14,7 +14,7 @@ func index() string {
 }
 
 func readPost(postId string) string {
-	p := PostModelInit(mSession.DB(dbname).C("posts"))
+	p := PostModelInit(mSession.DB(config.Get("mongodb")).C("posts"))
 	result := p.Get(postId)
 	
 	viewVars := make(map[string]string)
@@ -36,7 +36,7 @@ func readPost(postId string) string {
 }
 
 func listPosts() string {
-	p := PostModelInit(mSession.DB(dbname).C("posts"))
+	p := PostModelInit(mSession.DB(config.Get("mongodb")).C("posts"))
 	results := p.PostListing()
 	
 	output := mustache.RenderFile("templates/post-listing.mustache", map[string]interface{} {"Posts": results})

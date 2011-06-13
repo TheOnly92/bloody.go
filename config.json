@@ -1,0 +1,5 @@
+{
+	"mongohost": "localhost",
+	"mongodb": "bloody",
+	"staticdir": "./static"
+}

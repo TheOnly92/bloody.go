@@ -9,11 +9,6 @@ import (
 	"./session"
 )
 
-var (
-	host = "localhost"
-	dbname = "bloody"
-)
-
 type User struct {
 	Username	string
 	Password	string
@@ -22,12 +17,13 @@ type User struct {
 var mSession *mgo.Session
 var mongoInit = false
 var h *session.MHandler
+var config *Config
 
 var layout *mustache.Template
 
 func initMongo() {
 	var err os.Error
-	mSession, err = mgo.Mongo(host)
+	mSession, err = mgo.Mongo(config.Get("mongohost"))
 	if err != nil {
 		panic(err)
 	}
@@ -44,11 +40,12 @@ func objectIdHex(objectId string) string {
 }
 
 func main() {
+	config = loadConfig()
 	initMongo()
 	initLayout()
 	h = new(session.MHandler)
 	h.SetSession(mSession)
-	web.Config = &web.ServerConfig{"./static","0.0.0.0",9999,"98uarpouaskdjiu4231",true}
+	web.Config.StaticDir = config.Get("staticdir")
 	web.Get("/", index)
 	web.Get("/post/list", listPosts)
 	web.Get("/post/([A-Za-z0-9]+)", readPost)

@@ -67,7 +67,7 @@ func newPostPost(ctx *web.Context) {
 		ctx.Redirect(302, "/admin/login")
 		return
 	}
-	p := PostModelInit(mSession.DB(dbname).C("posts"))
+	p := PostModelInit(mSession.DB(config.Get("mongodb")).C("posts"))
 	p.Create(ctx.Params["title"], ctx.Params["content"])
 	ctx.Redirect(302, "/admin/post/list")
 }
@@ -79,7 +79,7 @@ func listPost(ctx *web.Context) string {
 		ctx.Redirect(302, "/admin/login")
 		return ""
 	}
-	p := PostModelInit(mSession.DB(dbname).C("posts"))
+	p := PostModelInit(mSession.DB(config.Get("mongodb")).C("posts"))
 	results := p.PostListing()
 	
 	output := mustache.RenderFile("templates/list-post.mustache", map[string][]map[string]string {"posts":results})
@@ -93,7 +93,7 @@ func editPostGet(ctx *web.Context, postId string) string {
 		ctx.Redirect(302, "/admin/login")
 		return ""
 	}
-	p := PostModelInit(mSession.DB(dbname).C("posts"))
+	p := PostModelInit(mSession.DB(config.Get("mongodb")).C("posts"))
 	result := p.Get(postId)
 	
 	output := mustache.RenderFile("templates/edit-post.mustache", map[string]string {"Title":result.Title, "Content":result.Content, "id":objectIdHex(result.Id.String())})
@@ -107,7 +107,7 @@ func editPostPost(ctx *web.Context, postId string) {
 		ctx.Redirect(302, "/admin/login")
 		return
 	}
-	p := PostModelInit(mSession.DB(dbname).C("posts"))
+	p := PostModelInit(mSession.DB(config.Get("mongodb")).C("posts"))
 	p.Update(ctx.Params["title"], ctx.Params["content"], postId)
 	
 	ctx.Redirect(302, "/admin/post/list")
@@ -120,7 +120,7 @@ func delPost(ctx *web.Context, postId string) {
 		ctx.Redirect(302, "/admin/login")
 		return
 	}
-	p := PostModelInit(mSession.DB(dbname).C("posts"))
+	p := PostModelInit(mSession.DB(config.Get("mongodb")).C("posts"))
 	p.Delete(postId)
 	
 	ctx.Redirect(302, "/admin/post/list")
