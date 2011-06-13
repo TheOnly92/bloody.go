@@ -17,12 +17,12 @@ type Post struct {
 }
 
 type PostModel struct {
-	c			*mgo.Collection
+	c			mgo.Collection
 }
 
-func PostModelInit(c mgo.Collection) *PostModel {
+func PostModelInit() *PostModel {
 	p := new(PostModel)
-	p.c = &c
+	p.c = mSession.DB(config.Get("mongodb")).C("posts")
 	return p
 }
 

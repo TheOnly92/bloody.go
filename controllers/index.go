@@ -8,7 +8,7 @@ import (
 )
 
 func index() string {
-	p := PostModelInit(mSession.DB(config.Get("mongodb")).C("posts"))
+	p := PostModelInit()
 	results := p.FrontPage()
 	
 	output := mustache.RenderFile("templates/post.mustache", map[string][]map[string]string {"posts":results})
@@ -16,7 +16,7 @@ func index() string {
 }
 
 func readPost(postId string) string {
-	p := PostModelInit(mSession.DB(config.Get("mongodb")).C("posts"))
+	p := PostModelInit()
 	result := p.Get(postId)
 	
 	viewVars := make(map[string]string)
@@ -55,7 +55,7 @@ func listPosts(ctx *web.Context) string {
 	if temp, exists := ctx.Params["page"]; exists {
 		page, _ = strconv.Atoi(temp)
 	}
-	p := PostModelInit(mSession.DB(config.Get("mongodb")).C("posts"))
+	p := PostModelInit()
 	results := p.PostListing(page)
 	
 	totPages := p.TotalPages()
