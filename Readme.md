@@ -9,3 +9,7 @@ bloody.go uses a slightly modified version of web.go to better support cookies.
 * web.go: https://github.com/hoisie/web.go
 * mustache.go: https://github.com/hoisie/mustache.go
 * mgo: http://labix.org/mgo
+
+## Demo
+
+http://rewaz.org:5999
