@@ -12,7 +12,18 @@
 			<div id="Header">
 				<h1><a href="/">Bloody.go</a></h1>
 			</div>
-			{{{Body}}}
+			<div id="Sidebar">
+				<ul>
+					{{#SidePages}}
+					<li><a href="/page/{{Slug}}.html">{{Title}}</a></li>
+					{{/SidePages}}
+					<li><a href="/post/list">Blog Entries</a></li>
+				</ul>
+			</div>
+			<div id="WrapContent">
+				{{{Body}}}
+			</div>
+			<div style="clear: both;"></div>
 			<div id="Footer">
 				<p>Powered by <a href="https://github.com/TheOnly92/bloody.go">bloody.go</a></p>
 			</div>

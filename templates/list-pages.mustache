@@ -1,0 +1,11 @@
+<h1>List of Your Pages</h1>
+<p>[ <a href="/admin/page/new">New Page</a> ]</p>
+<table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size: 13px;">
+	{{#pages}}
+	<tr>
+		<td style="width: 130px">{{Date}}</td>
+		<td><a href="/admin/page/edit/{{Id}}">{{Title}}</a></td>
+		<td>[ <a href="/admin/page/del/{{Id}}">Del</a> ]</td>
+	</tr>
+	{{/pages}}
+</table>

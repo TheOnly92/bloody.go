@@ -1,17 +1,17 @@
-<div id="Post" style="border-bottom: none">
-	<div style="font-size: 12px; width: 300px; margin: 0px auto;">
-		<span style="text-align: right; width: 100px; display: block; float: left;">{{#Last}}<a href="/post/{{Last}}">&laquo; Last Entry</a>{{/Last}}{{^Last}}&nbsp;{{/Last}}</span>
-		<span style="width: 100px; text-align: center; display: block; float: left;">| <a href="/post/list">Blog Entries</a> |</span>
-		<span style="width: 100px; display: block; float: left;">{{#Next}}<a href="/post/{{Next}}">Next Entry &raquo;</a>{{/Next}}</span>
-		<div style="clear: both;"></div>
-	</div>
+<div style="font-size: 12px; width: 300px; margin: 0px auto;">
+	<span style="text-align: right; width: 100px; display: block; float: left;">{{#Last}}<a href="/post/{{Last}}">&laquo; Last Entry</a>{{/Last}}{{^Last}}&nbsp;{{/Last}}</span>
+	<span style="width: 100px; text-align: center; display: block; float: left;">| <a href="/post/list">Blog Entries</a> |</span>
+	<span style="width: 100px; display: block; float: left;">{{#Next}}<a href="/post/{{Next}}">Next Entry &raquo;</a>{{/Next}}</span>
+	<div style="clear: both;"></div>
+</div>
+<div id="Post">
 	<h1>{{Title}}</h1>
-	<p id="Date"><a href="/post/{{Id}}">Published on {{Date}}</a></p>
-	<div id="Content" style="border-bottom: 1px solid black; padding-bottom: 6px">{{{Content}}}</div>
-	<div style="font-size: 12px; width: 300px; margin: 10px auto;">
-		<span style="text-align: right; width: 100px; display: block; float: left;">{{#Last}}<a href="/post/{{Last}}">&laquo; Last Entry</a>{{/Last}}{{^Last}}&nbsp;{{/Last}}</span>
-		<span style="width: 100px; text-align: center; display: block; float: left;">| <a href="/post/list">Blog Entries</a> |</span>
-		<span style="width: 100px; display: block; float: left;">{{#Next}}<a href="/post/{{Next}}">Next Entry &raquo;</a>{{/Next}}</span>
-		<div style="clear: both;"></div>
-	</div>
+	<div id="Content">{{{Content}}}</div>
+	<p id="Info">{{Date}} | <a href="/post/{{Id}}">Permalink</a></p>
+</div>
+<div style="font-size: 12px; width: 300px; margin: 10px auto;">
+	<span style="text-align: right; width: 100px; display: block; float: left;">{{#Last}}<a href="/post/{{Last}}">&laquo; Last Entry</a>{{/Last}}{{^Last}}&nbsp;{{/Last}}</span>
+	<span style="width: 100px; text-align: center; display: block; float: left;">| <a href="/post/list">Blog Entries</a> |</span>
+	<span style="width: 100px; display: block; float: left;">{{#Next}}<a href="/post/{{Next}}">Next Entry &raquo;</a>{{/Next}}</span>
+	<div style="clear: both;"></div>
 </div>

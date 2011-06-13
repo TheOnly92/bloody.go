@@ -7,6 +7,7 @@ import (
 	"./mustache"
 	"regexp"
 	"./session"
+	"bytes"
 )
 
 type User struct {
@@ -33,10 +34,30 @@ func initLayout() {
 	layout, _ = mustache.ParseFile("templates/layout.mustache")
 }
 
+func render(output string, title string) string {
+	vars := make(map[string]interface{})
+	vars["Body"] = output
+	if title != "" {
+		vars["Title"] = map[string]string {"Name": title}
+	}
+	p := PageModelInit()
+	vars["SidePages"] = p.Sidebar()
+	return layout.Render(vars)
+}
+
 func objectIdHex(objectId string) string {
 	var rx_objecthex = regexp.MustCompile("ObjectIdHex\\(\"([A-Za-z0-9]+)\"\\)")
 	match := rx_objecthex.FindStringSubmatch(objectId)
 	return match[1]
+}
+
+func toAscii(str string) string {
+	var rx_ascii = regexp.MustCompile("[^a-zA-Z0-9/_|+ \\-]")
+	var rx_chars = regexp.MustCompile("[/_|+ \\-]+")
+	rt := rx_ascii.ReplaceAllString(str, "")
+	rt = string(bytes.ToLower([]byte(rt)))
+	rt = rx_chars.ReplaceAllString(rt, "-")
+	return rt
 }
 
 func pagination(page int, totPages int) map[string]interface{} {
@@ -89,6 +110,7 @@ func main() {
 	web.Get("/", index)
 	web.Get("/post/list", listPosts)
 	web.Get("/post/([A-Za-z0-9]+)", readPost)
+	web.Get("/page/([a-z0-9\\-]+)\\.html", readPage)
 	web.Get("/admin", adminIndexGet)
 	web.Get("/admin/post/new", newPostGet)
 	web.Post("/admin/post/new", newPostPost)
@@ -98,5 +120,11 @@ func main() {
 	web.Get("/admin/post/del/(.*)", delPost)
 	web.Get("/admin/login", adminLoginGet)
 	web.Post("/admin/login", adminLoginPost)
-	web.Run("0.0.0.0:9999")
+	web.Get("/admin/page/new", adminNewPageGet)
+	web.Post("/admin/page/new", adminNewPagePost)
+	web.Get("/admin/page/list", adminListPagesGet)
+	web.Get("/admin/page/edit/(.*)", adminEditPageGet)
+	web.Post("/admin/page/edit/(.*)", adminEditPagePost)
+	web.Get("/admin/page/del/(.*)", adminDelPage)
+	web.Run(config.Get("host")+":"+config.Get("port"))
 }

@@ -1,0 +1,12 @@
+<h1>Create New Page</h1>
+<form method="post" action="/admin/page/new">
+	<label for="title">Title</label>
+	<input type="text" id="title" name="title" style="width: 300px" /><br />
+	<label for="content">Content</label>
+	<div style="clear: both"></div>
+	<textarea id="content" name="content"></textarea><br />
+	<input type="submit" value="Create!" />
+</form>
+<script type="text/javascript">
+$('#content').cleditor()[0].focus();
+</script>

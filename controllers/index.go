@@ -12,7 +12,7 @@ func index() string {
 	results := p.FrontPage()
 	
 	output := mustache.RenderFile("templates/post.mustache", map[string][]map[string]string {"posts":results})
-	return layout.Render(map[string]string {"Body": output})
+	return render(output, "")
 }
 
 func readPost(postId string) string {
@@ -34,7 +34,20 @@ func readPost(postId string) string {
 	}
 	
 	output := mustache.RenderFile("templates/view-post.mustache", viewVars)
-	return layout.Render(map[string]interface{} {"Body": output, "Title": map[string]string {"Name": result.Title}})
+	return render(output, result.Title)
+}
+
+func readPage(pageSlug string) string {
+	p := PageModelInit()
+	result := p.GetBySlug(pageSlug)
+	
+	viewVars := make(map[string]string)
+	viewVars["Title"] = result.Title
+	viewVars["Content"] = result.Content
+	viewVars["Date"] = time.SecondsToLocalTime(result.Created).Format("2006 Jan 02 15:04")
+	
+	output := mustache.RenderFile("templates/view-page.mustache", viewVars)
+	return render(output, result.Title)
 }
 
 func listPosts(ctx *web.Context) string {
@@ -48,5 +61,5 @@ func listPosts(ctx *web.Context) string {
 	totPages := p.TotalPages()
 	
 	output := mustache.RenderFile("templates/post-listing.mustache", map[string]interface{} {"Posts": results, "Pagination": pagination(page, totPages)})
-	return layout.Render(map[string]interface{} {"Body": output, "Title": map[string]string {"Name": "Post Listing"}})
+	return render(output, "Post Listing")
 }

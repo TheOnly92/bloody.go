@@ -1,13 +1,7 @@
-<div style="font-size: 12px; text-align: center;">
-	<a href="/post/list">Blog Entries</a>
-</div>
 {{#posts}}
 <div id="Post">
 	<h1>{{Title}}</h1>
-	<p id="Date"><a href="/post/{{Id}}">Published on {{Date}}</a></p>
 	<div id="Content">{{{Content}}}</div>
+	<p id="Info">{{Date}} | <a href="/post/{{Id}}">Permalink</a></p>
 </div>
 {{/posts}}
-<div style="font-size: 12px; text-align: center;">
-	<a href="/post/list">Blog Entries</a>
-</div>
