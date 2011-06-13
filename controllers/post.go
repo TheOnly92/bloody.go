@@ -79,8 +79,12 @@ func listPost(ctx *web.Context) string {
 		ctx.Redirect(302, "/admin/login")
 		return ""
 	}
+	page := 0
+	if temp, exists := ctx.Params["page"]; exists {
+		page, _ = strconv.Atoi(temp)
+	}
 	p := PostModelInit(mSession.DB(config.Get("mongodb")).C("posts"))
-	results := p.PostListing()
+	results := p.PostListing(page)
 	
 	output := mustache.RenderFile("templates/list-post.mustache", map[string][]map[string]string {"posts":results})
 	return layout.Render(map[string]interface{} {"Body": output, "Title": map[string]string {"Name": "List Posts"}})

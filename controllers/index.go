@@ -3,6 +3,8 @@ package main
 import (
 	"./mustache"
 	"time"
+	"strconv"
+	"web"
 )
 
 func index() string {
@@ -20,7 +22,7 @@ func readPost(postId string) string {
 	viewVars := make(map[string]string)
 	viewVars["Title"] = result.Title
 	viewVars["Content"] = result.Content
-	viewVars["Date"] = time.SecondsToLocalTime(result.Timestamp).Format("2006 Jan 02 15:04")
+	viewVars["Date"] = time.SecondsToLocalTime(result.Created).Format("2006 Jan 02 15:04")
 	viewVars["Id"] = objectIdHex(result.Id.String())
 	
 	
@@ -35,10 +37,16 @@ func readPost(postId string) string {
 	return layout.Render(map[string]interface{} {"Body": output, "Title": map[string]string {"Name": result.Title}})
 }
 
-func listPosts() string {
+func listPosts(ctx *web.Context) string {
+	page := 1
+	if temp, exists := ctx.Params["page"]; exists {
+		page, _ = strconv.Atoi(temp)
+	}
 	p := PostModelInit(mSession.DB(config.Get("mongodb")).C("posts"))
-	results := p.PostListing()
+	results := p.PostListing(page)
 	
-	output := mustache.RenderFile("templates/post-listing.mustache", map[string]interface{} {"Posts": results})
+	totPages := p.TotalPages()
+	
+	output := mustache.RenderFile("templates/post-listing.mustache", map[string]interface{} {"Posts": results, "Pagination": pagination(page, totPages)})
 	return layout.Render(map[string]interface{} {"Body": output, "Title": map[string]string {"Name": "Post Listing"}})
 }

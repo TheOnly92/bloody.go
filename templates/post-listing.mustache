@@ -1,4 +1,26 @@
 <h1>Blog Entries</h1>
+{{#Pagination}}
+<div id="Pagination">
+	<span style="float: left; width: 100px; display: block;">
+	{{#Before}}
+	<a href="/post/list?page=1">&laquo;</a> | <a href="/post/list?page={{BeforePage}}">&lt; Previous</a>
+	{{/Before}}
+	{{^Before}}&nbsp;{{/Before}}
+	</span>
+	<span style="margin-left: 150px; float: left; display: block">
+		|{{#Pages}}
+			{{^current}}<a href="/post/list?page={{page}}">{{/current}}{{page}}{{^current}}</a>{{/current}} |
+		{{/Pages}}
+	</span>
+	<span style="float: right; width: 100px; display: block;">
+	{{#After}}
+	<a href="/post/list?page={{AfterPage}}">Next &gt;</a> | <a href="/post/list?page={{LastPage}}">&raquo;</a>
+	{{/After}}
+	{{^After}}&nbsp;{{/After}}
+	</span>
+	<div style="clear: both;"></div>
+</div>
+{{/Pagination}}
 <div id="PostListing">
 	<ul>
 		{{#Posts}}
@@ -9,3 +31,25 @@
 		{{/Posts}}
 	</ul>
 </div>
+{{#Pagination}}
+<div id="Pagination">
+	<span style="float: left; width: 100px; display: block;">
+	{{#Before}}
+	<a href="/post/list?page=1">&laquo;</a> | <a href="/post/list?page={{BeforePage}}">&lt; Previous</a>
+	{{/Before}}
+	{{^Before}}&nbsp;{{/Before}}
+	</span>
+	<span style="margin-left: 150px; float: left; display: block">
+		|{{#Pages}}
+			{{^current}}<a href="/post/list?page={{page}}">{{/current}}{{page}}{{^current}}</a>{{/current}} |
+		{{/Pages}}
+	</span>
+	<span style="float: right; width: 100px; display: block;">
+	{{#After}}
+	<a href="/post/list?page={{AfterPage}}">Next &gt;</a> | <a href="/post/list?page={{LastPage}}">&raquo;</a>
+	{{/After}}
+	{{^After}}&nbsp;{{/After}}
+	</span>
+	<div style="clear: both;"></div>
+</div>
+{{/Pagination}}

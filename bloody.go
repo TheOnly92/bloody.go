@@ -39,6 +39,46 @@ func objectIdHex(objectId string) string {
 	return match[1]
 }
 
+func pagination(page int, totPages int) map[string]interface{} {
+	start := 1
+	if page > 3 {
+		start = page - 2
+	}
+	end := start + 4
+	if end > totPages {
+		end = totPages
+	}
+	length := 5
+	if totPages < length {
+		length = totPages
+	}
+	pages := make([]map[string]int, length)
+	cnt := 0
+	for i:=start; i <= end; i++ {
+		temp := map[string]int{"page": i}
+		if i == page {
+			temp["current"] = 1
+		}
+		pages[cnt] = temp
+		cnt++
+	}
+	
+	before := true
+	beforePage := page - 1
+	after := true
+	afterPage := page + 1
+	lastPage := totPages
+	if page == 1 {
+		before = false
+		beforePage = 0
+	}
+	if page == totPages {
+		after = false
+	}
+	
+	return map[string]interface{} {"Pages": pages, "Before": before, "BeforePage": beforePage, "After": after, "AfterPage": afterPage, "LastPage": lastPage}
+}
+
 func main() {
 	config = loadConfig()
 	initMongo()
