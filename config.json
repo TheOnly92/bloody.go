@@ -1,5 +1,7 @@
 {
 	"mongohost": "localhost",
 	"mongodb": "bloody",
-	"staticdir": "./static"
+	"staticdir": "./static",
+	"adminuser": "admin",
+	"adminpasswd": "123456"
 }

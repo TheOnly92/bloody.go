@@ -40,7 +40,7 @@ func adminLoginPost(ctx *web.Context) {
 		ctx.Redirect(302, "/admin/post/list")
 		return
 	}
-	if ctx.Params["username"] == "admin" && ctx.Params["password"] == "123456" {
+	if ctx.Params["username"] == config.Get("adminuser") && ctx.Params["password"] == config.Get("adminpasswd") {
 		t := time.LocalTime()
 		var h hash.Hash = sha1.New()
 		h.Write([]byte(strconv.Itoa64(t.Seconds())))
