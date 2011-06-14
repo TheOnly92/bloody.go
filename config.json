@@ -3,5 +3,7 @@
 	"mongodb": "bloody",
 	"staticdir": "./static",
 	"adminuser": "admin",
-	"adminpasswd": "123456"
+	"adminpasswd": "123456",
+	"host": "127.0.0.1",
+	"port": "9999"
 }
