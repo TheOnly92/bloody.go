@@ -115,6 +115,7 @@ func main() {
 	web.Get("/admin/post/new", newPostGet)
 	web.Post("/admin/post/new", newPostPost)
 	web.Get("/admin/post/list", listPost)
+	web.Post("/admin/post/list", adminBulkActions)
 	web.Get("/admin/post/edit/(.*)", editPostGet)
 	web.Post("/admin/post/edit/(.*)", editPostPost)
 	web.Get("/admin/post/del/(.*)", delPost)

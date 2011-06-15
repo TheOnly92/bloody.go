@@ -9,6 +9,8 @@ import (
 	"hash"
 	"strconv"
 	"encoding/hex"
+	//"fmt"
+	//"reflect"
 )
 
 func adminIndexGet(ctx *web.Context) string {
@@ -68,7 +70,7 @@ func newPostPost(ctx *web.Context) {
 		return
 	}
 	p := PostModelInit()
-	p.Create(ctx.Params["title"], ctx.Params["content"])
+	p.Create(ctx.Params["title"], ctx.Params["content"], ctx.Params["status"])
 	ctx.Redirect(302, "/admin/post/list")
 }
 
@@ -100,7 +102,14 @@ func editPostGet(ctx *web.Context, postId string) string {
 	p := PostModelInit()
 	result := p.Get(postId)
 	
-	output := mustache.RenderFile("templates/edit-post.mustache", map[string]string {"Title":result.Title, "Content":result.Content, "id":objectIdHex(result.Id.String())})
+	templateVars := map[string]interface{} {"Title":result.Title, "Content":result.Content, "id":objectIdHex(result.Id.String())}
+	if result.Status == 0 {
+		templateVars["Draft"] = 1
+	}
+	if result.Status == 1 {
+		templateVars["Publish"] = 1
+	}
+	output := mustache.RenderFile("templates/edit-post.mustache", templateVars)
 	return render(output, "Edit Post")
 }
 
@@ -112,7 +121,7 @@ func editPostPost(ctx *web.Context, postId string) {
 		return
 	}
 	p := PostModelInit()
-	p.Update(ctx.Params["title"], ctx.Params["content"], postId)
+	p.Update(ctx.Params["title"], ctx.Params["content"], ctx.Params["status"], postId)
 	
 	ctx.Redirect(302, "/admin/post/list")
 }
@@ -126,6 +135,24 @@ func delPost(ctx *web.Context, postId string) {
 	}
 	p := PostModelInit()
 	p.Delete(postId)
+	
+	ctx.Redirect(302, "/admin/post/list")
+}
+
+func adminBulkActions(ctx *web.Context) {
+	sessionH := session.Start(ctx, h)
+	defer sessionH.Save()
+	if sessionH.Data["logged"] == nil {
+		ctx.Redirect(302, "/admin/login")
+		return
+	}
+	p := PostModelInit()
+	switch ctx.Params["action"] {
+	case "delete":
+		p.DeleteBulk(ctx.FullParams["posts[]"])
+	case "publish":
+		p.PublishBulk(ctx.FullParams["posts[]"])
+	}
 	
 	ctx.Redirect(302, "/admin/post/list")
 }

@@ -5,6 +5,7 @@ import (
 	"time"
 	"strconv"
 	"web"
+	"./session"
 )
 
 func index() string {
@@ -15,7 +16,7 @@ func index() string {
 	return render(output, "")
 }
 
-func readPost(postId string) string {
+func readPost(ctx *web.Context, postId string) string {
 	p := PostModelInit()
 	result := p.Get(postId)
 	
@@ -24,6 +25,15 @@ func readPost(postId string) string {
 	viewVars["Content"] = result.Content
 	viewVars["Date"] = time.SecondsToLocalTime(result.Created).Format("2006 Jan 02 15:04")
 	viewVars["Id"] = objectIdHex(result.Id.String())
+	
+	if result.Status == 0 {
+		sessionH := session.Start(ctx, h)
+		defer sessionH.Save()
+		if sessionH.Data["logged"] == nil {
+			ctx.Redirect(302, "/")
+			return ""
+		}
+	}
 	
 	
 	if next, exists := p.GetNextId(objectIdHex(result.Id.String())); exists {
