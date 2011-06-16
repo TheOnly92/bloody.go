@@ -95,7 +95,11 @@ func (post *PostModel) PostListing(page int) []map[string]string {
 	results := []map[string]string{}
 	callback := func() os.Error {
 		t := time.SecondsToLocalTime(result.Created)
-		results = append(results, map[string]string {"Title":result.Title, "Date":t.Format("2006 Jan 02 15:04"), "Id": objectIdHex(result.Id.String())})
+		p := map[string]string {"Title":result.Title, "Date":t.Format("2006 Jan 02 15:04"), "Id": objectIdHex(result.Id.String())}
+		if (result.Status == 0) {
+			p["Draft"] = "1"
+		}
+		results = append(results, p)
 		return nil
 	}
 	var err os.Error

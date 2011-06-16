@@ -6,8 +6,8 @@
 	<tr>
 		<td><input type="checkbox" name="posts[]" value="{{Id}}" /></td>
 		<td style="width: 130px">{{Date}}</td>
-		<td><a href="/admin/post/edit/{{Id}}">{{Title}}</a></td>
-		<td>[ <a href="/admin/post/del/{{Id}}">Del</a> ]</td>
+		<td><a href="/admin/post/edit/{{Id}}">{{Title}}</a>{{#Draft}} - Draft{{/Draft}}</td>
+		<td>[ <a href="/admin/post/del/{{Id}}">Del</a> <a href="/admin/post/edit/{{Id}}">Edit</a> ]</td>
 	</tr>
 	{{/posts}}
 </table>
