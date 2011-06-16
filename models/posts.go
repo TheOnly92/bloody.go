@@ -31,7 +31,8 @@ func PostModelInit() *PostModel {
 func (post *PostModel) FrontPage() []map[string]string {
 	var result *Post
 	results := []map[string]string{}
-	err := post.c.Find(bson.M{"status":1}).Sort(bson.M{"timestamp":-1}).Limit(10).For(&result, func() os.Error {
+	posts, _ := strconv.Atoi(blogConfig.Get("postsPerPage"))
+	err := post.c.Find(bson.M{"status":1}).Sort(bson.M{"timestamp":-1}).Limit(posts).For(&result, func() os.Error {
 		t := time.SecondsToLocalTime(result.Created)
 		results = append(results, map[string]string {"Title":result.Title, "Content":result.Content, "Date":t.Format("2006 Jan 02 15:04"), "Id": objectIdHex(result.Id.String())})
 		return nil
@@ -82,11 +83,12 @@ func (post *PostModel) GetLastId(postId string) (string, bool) {
 }
 
 func (post *PostModel) TotalPages() int {
-	total, err := post.c.Find(nil).Count()
+	total, err := post.c.Find(bson.M{"status":1}).Count()
 	if err != nil {
 		panic(err)
 	}
-	pages := float64(total) / 10
+	posts, _ := strconv.Atoi(blogConfig.Get("postsPerPage"))
+	pages := float64(total) / float64(posts)
 	return int(math.Ceil(pages))
 }
 
@@ -95,7 +97,7 @@ func (post *PostModel) PostListing(page int) []map[string]string {
 	results := []map[string]string{}
 	callback := func() os.Error {
 		t := time.SecondsToLocalTime(result.Created)
-		p := map[string]string {"Title":result.Title, "Date":t.Format("2006 Jan 02 15:04"), "Id": objectIdHex(result.Id.String())}
+		p := map[string]string {"Title":result.Title, "Date":t.Format(blogConfig.Get("dateFormat")), "Id": objectIdHex(result.Id.String())}
 		if (result.Status == 0) {
 			p["Draft"] = "1"
 		}
@@ -106,7 +108,8 @@ func (post *PostModel) PostListing(page int) []map[string]string {
 	if page == 0 {
 		err = post.c.Find(nil).Sort(bson.M{"timestamp":-1}).For(&result, callback)
 	} else {
-		err = post.c.Find(bson.M{"status":1}).Sort(bson.M{"timestamp":-1}).Skip(10 * (page - 1)).Limit(10).For(&result, callback)
+		posts, _ := strconv.Atoi(blogConfig.Get("postsPerPage"))
+		err = post.c.Find(bson.M{"status":1}).Sort(bson.M{"timestamp":-1}).Skip(posts * (page - 1)).Limit(posts).For(&result, callback)
 	}
 	if err != nil {
 		panic(err)

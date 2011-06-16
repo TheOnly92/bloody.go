@@ -23,7 +23,7 @@ func readPost(ctx *web.Context, postId string) string {
 	viewVars := make(map[string]string)
 	viewVars["Title"] = result.Title
 	viewVars["Content"] = result.Content
-	viewVars["Date"] = time.SecondsToLocalTime(result.Created).Format(config.Get("date_format"))
+	viewVars["Date"] = time.SecondsToLocalTime(result.Created).Format(blogConfig.Get("dateFormat"))
 	viewVars["Id"] = objectIdHex(result.Id.String())
 	
 	if result.Status == 0 {
@@ -54,7 +54,7 @@ func readPage(pageSlug string) string {
 	viewVars := make(map[string]string)
 	viewVars["Title"] = result.Title
 	viewVars["Content"] = result.Content
-	viewVars["Date"] = time.SecondsToLocalTime(result.Created).Format(config.Get("date_format"))
+	viewVars["Date"] = time.SecondsToLocalTime(result.Created).Format(blogConfig.Get("dateFormat"))
 	
 	output := mustache.RenderFile("templates/view-page.mustache", viewVars)
 	return render(output, result.Title)

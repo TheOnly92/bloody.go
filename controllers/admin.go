@@ -51,6 +51,31 @@ func adminLoginPost(ctx *web.Context) {
 	ctx.Redirect(302, "/admin/post/list")
 }
 
+func adminPreferencesGet(ctx *web.Context) string {
+	sessionH := session.Start(ctx, h)
+	defer sessionH.Save()
+	if sessionH.Data["logged"] == nil {
+		ctx.Redirect(302, "/admin/login")
+		return ""
+	}
+	
+	output := mustache.RenderFile("templates/preferences.mustache", map[string]string {"DateFormat": blogConfig.Get("dateFormat"), "PostsPerPage": blogConfig.Get("postsPerPage")})
+	return render(output, "Blog Preferernces")
+}
+
+func adminPreferencesPost(ctx *web.Context) {
+	sessionH := session.Start(ctx, h)
+	defer sessionH.Save()
+	if sessionH.Data["logged"] == nil {
+		ctx.Redirect(302, "/admin/login")
+		return
+	}
+	
+	blogConfig.Update("dateFormat", ctx.Params["dateFormat"])
+	blogConfig.Update("postsPerPage", ctx.Params["postsPerPage"])
+	ctx.Redirect(302, "/admin/preferences")
+}
+
 func newPostGet(ctx *web.Context) string {
 	sessionH := session.Start(ctx, h)
 	defer sessionH.Save()

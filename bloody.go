@@ -22,6 +22,8 @@ var config *Config
 
 var layout *mustache.Template
 
+var blogConfig *PreferenceModel
+
 func initMongo() {
 	var err os.Error
 	mSession, err = mgo.Mongo(config.Get("mongohost"))
@@ -106,12 +108,15 @@ func main() {
 	initLayout()
 	h = new(session.MHandler)
 	h.SetSession(mSession)
+	blogConfig = PreferenceInit()
 	web.Config.StaticDir = config.Get("staticdir")
 	web.Get("/", index)
 	web.Get("/post/list", listPosts)
 	web.Get("/post/([A-Za-z0-9]+)", readPost)
 	web.Get("/page/([a-z0-9\\-]+)\\.html", readPage)
 	web.Get("/admin", adminIndexGet)
+	web.Get("/admin/preferences", adminPreferencesGet)
+	web.Post("/admin/preferences", adminPreferencesPost)
 	web.Get("/admin/post/new", newPostGet)
 	web.Post("/admin/post/new", newPostPost)
 	web.Get("/admin/post/list", listPost)
