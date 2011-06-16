@@ -1,9 +1,9 @@
 <h1>Preferences</h1>
 <form method="post" action="/preferences">
 	<label for="dateFormat">Date Format</label>
-	<input type="text" id="dateFormat" name="dateFormat" style="width: 300px" /><br />
+	<input type="text" id="dateFormat" name="dateFormat" style="width: 300px" value="{{DateFormat}}" /><br />
 	<label for="postsPerPage"><abbr title="Posts Per Page">PPP</abbr></label>
-	<input type="text" id="postsPerPage" name="postsPerPage" style="width: 300px" /><br />
+	<input type="text" id="postsPerPage" name="postsPerPage" style="width: 300px" value="{{PostsPerPage}}" /><br />
 	<br />
 	<input type="submit" value="Save!" />
 </form>
