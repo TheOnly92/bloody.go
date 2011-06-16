@@ -57,7 +57,7 @@ func (post *PostModel) Get(postId string) *Post {
 func (post *PostModel) GetNextId(postId string) (string, bool) {
 	var next *Post
 	result := post.Get(postId)
-	err := post.c.Find(bson.M{"timestamp": bson.M{"$gt":result.Created}}).Sort(bson.M{"timestamp":1}).One(&next)
+	err := post.c.Find(bson.M{"status":1, "timestamp": bson.M{"$gt":result.Created}}).Sort(bson.M{"timestamp":1}).One(&next)
 	if err != nil && err != mgo.NotFound {
 		panic(err)
 	}
@@ -71,7 +71,7 @@ func (post *PostModel) GetNextId(postId string) (string, bool) {
 func (post *PostModel) GetLastId(postId string) (string, bool) {
 	var last *Post
 	result := post.Get(postId)
-	err := post.c.Find(bson.M{"timestamp": bson.M{"$lt":result.Created}}).Sort(bson.M{"timestamp":-1}).One(&last)
+	err := post.c.Find(bson.M{"status":1, "timestamp": bson.M{"$lt":result.Created}}).Sort(bson.M{"timestamp":-1}).One(&last)
 	if err != nil && err != mgo.NotFound {
 		panic(err)
 	}
