@@ -34,7 +34,7 @@ func (post *PostModel) FrontPage() []map[string]string {
 	posts, _ := strconv.Atoi(blogConfig.Get("postsPerPage"))
 	err := post.c.Find(bson.M{"status":1}).Sort(bson.M{"timestamp":-1}).Limit(posts).For(&result, func() os.Error {
 		t := time.SecondsToLocalTime(result.Created)
-		results = append(results, map[string]string {"Title":result.Title, "Content":result.Content, "Date":t.Format("2006 Jan 02 15:04"), "Id": objectIdHex(result.Id.String())})
+		results = append(results, map[string]string {"Title":result.Title, "Content":result.Content, "Date":t.Format(blogConfig.Get("dateFormat")), "Id": objectIdHex(result.Id.String())})
 		return nil
 	})
 	if err != nil {
