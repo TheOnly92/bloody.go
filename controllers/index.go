@@ -8,7 +8,9 @@ import (
 	"./session"
 )
 
-func index() string {
+type Index struct {}
+
+func (c *Index) Index() string {
 	p := PostModelInit()
 	results := p.FrontPage()
 	
@@ -16,7 +18,7 @@ func index() string {
 	return render(output, "")
 }
 
-func readPost(ctx *web.Context, postId string) string {
+func (c *Index) ReadPost(ctx *web.Context, postId string) string {
 	p := PostModelInit()
 	result := p.Get(postId)
 	
@@ -47,7 +49,7 @@ func readPost(ctx *web.Context, postId string) string {
 	return render(output, result.Title)
 }
 
-func readPage(pageSlug string) string {
+func (c *Index) ReadPage(pageSlug string) string {
 	p := PageModelInit()
 	result := p.GetBySlug(pageSlug)
 	
@@ -60,7 +62,7 @@ func readPage(pageSlug string) string {
 	return render(output, result.Title)
 }
 
-func listPosts(ctx *web.Context) string {
+func (c *Index) ListPosts(ctx *web.Context) string {
 	page := 1
 	if temp, exists := ctx.Params["page"]; exists {
 		page, _ = strconv.Atoi(temp)

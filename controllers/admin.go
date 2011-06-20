@@ -13,7 +13,9 @@ import (
 	//"reflect"
 )
 
-func adminIndexGet(ctx *web.Context) string {
+type Admin struct {}
+
+func (c *Admin) IndexGet(ctx *web.Context) string {
 	sessionH := session.Start(ctx, h)
 	defer sessionH.Save()
 	if sessionH.Data["logged"] != nil {
@@ -24,7 +26,7 @@ func adminIndexGet(ctx *web.Context) string {
 	return ""
 }
 
-func adminLoginGet(ctx *web.Context) string {
+func (c *Admin) LoginGet(ctx *web.Context) string {
 	sessionH := session.Start(ctx, h)
 	defer sessionH.Save()
 	if sessionH.Data["logged"] != nil {
@@ -35,7 +37,7 @@ func adminLoginGet(ctx *web.Context) string {
 	return render(output, "Login")
 }
 
-func adminLoginPost(ctx *web.Context) {
+func (c *Admin) LoginPost(ctx *web.Context) {
 	sessionH := session.Start(ctx, h)
 	defer sessionH.Save()
 	if sessionH.Data["logged"] != nil {
@@ -51,7 +53,7 @@ func adminLoginPost(ctx *web.Context) {
 	ctx.Redirect(302, "/admin/post/list")
 }
 
-func adminPreferencesGet(ctx *web.Context) string {
+func (c *Admin) PreferencesGet(ctx *web.Context) string {
 	sessionH := session.Start(ctx, h)
 	defer sessionH.Save()
 	if sessionH.Data["logged"] == nil {
@@ -63,7 +65,7 @@ func adminPreferencesGet(ctx *web.Context) string {
 	return render(output, "Blog Preferernces")
 }
 
-func adminPreferencesPost(ctx *web.Context) {
+func (c *Admin) PreferencesPost(ctx *web.Context) {
 	sessionH := session.Start(ctx, h)
 	defer sessionH.Save()
 	if sessionH.Data["logged"] == nil {
@@ -76,7 +78,7 @@ func adminPreferencesPost(ctx *web.Context) {
 	ctx.Redirect(302, "/admin/preferences")
 }
 
-func newPostGet(ctx *web.Context) string {
+func (c *Admin) NewPostGet(ctx *web.Context) string {
 	sessionH := session.Start(ctx, h)
 	defer sessionH.Save()
 	if sessionH.Data["logged"] == nil {
@@ -87,7 +89,7 @@ func newPostGet(ctx *web.Context) string {
 	return render(output, "New Post")
 }
 
-func newPostPost(ctx *web.Context) {
+func (c *Admin) NewPostPost(ctx *web.Context) {
 	sessionH := session.Start(ctx, h)
 	defer sessionH.Save()
 	if sessionH.Data["logged"] == nil {
@@ -99,7 +101,7 @@ func newPostPost(ctx *web.Context) {
 	ctx.Redirect(302, "/admin/post/list")
 }
 
-func listPost(ctx *web.Context) string {
+func (c *Admin) ListPost(ctx *web.Context) string {
 	sessionH := session.Start(ctx, h)
 	defer sessionH.Save()
 	if sessionH.Data["logged"] == nil {
@@ -117,7 +119,7 @@ func listPost(ctx *web.Context) string {
 	return render(output, "List Posts")
 }
 
-func editPostGet(ctx *web.Context, postId string) string {
+func (c *Admin) EditPostGet(ctx *web.Context, postId string) string {
 	sessionH := session.Start(ctx, h)
 	defer sessionH.Save()
 	if sessionH.Data["logged"] == nil {
@@ -138,7 +140,7 @@ func editPostGet(ctx *web.Context, postId string) string {
 	return render(output, "Edit Post")
 }
 
-func editPostPost(ctx *web.Context, postId string) {
+func (c *Admin) EditPostPost(ctx *web.Context, postId string) {
 	sessionH := session.Start(ctx, h)
 	defer sessionH.Save()
 	if sessionH.Data["logged"] == nil {
@@ -151,7 +153,7 @@ func editPostPost(ctx *web.Context, postId string) {
 	ctx.Redirect(302, "/admin/post/list")
 }
 
-func delPost(ctx *web.Context, postId string) {
+func (c *Admin) DelPost(ctx *web.Context, postId string) {
 	sessionH := session.Start(ctx, h)
 	defer sessionH.Save()
 	if sessionH.Data["logged"] == nil {
@@ -164,7 +166,7 @@ func delPost(ctx *web.Context, postId string) {
 	ctx.Redirect(302, "/admin/post/list")
 }
 
-func adminBulkActions(ctx *web.Context) {
+func (c *Admin) BulkActions(ctx *web.Context) {
 	sessionH := session.Start(ctx, h)
 	defer sessionH.Save()
 	if sessionH.Data["logged"] == nil {
@@ -182,7 +184,7 @@ func adminBulkActions(ctx *web.Context) {
 	ctx.Redirect(302, "/admin/post/list")
 }
 
-func adminNewPageGet(ctx *web.Context) string {
+func (c *Admin) NewPageGet(ctx *web.Context) string {
 	sessionH := session.Start(ctx, h)
 	defer sessionH.Save()
 	if sessionH.Data["logged"] == nil {
@@ -193,7 +195,7 @@ func adminNewPageGet(ctx *web.Context) string {
 	return render(output, "New Page")
 }
 
-func adminNewPagePost(ctx *web.Context) {
+func (c *Admin) NewPagePost(ctx *web.Context) {
 	sessionH := session.Start(ctx, h)
 	defer sessionH.Save()
 	if sessionH.Data["logged"] == nil {
@@ -205,7 +207,7 @@ func adminNewPagePost(ctx *web.Context) {
 	ctx.Redirect(302, "/admin/page/list")
 }
 
-func adminListPagesGet(ctx *web.Context) string {
+func (c *Admin) ListPagesGet(ctx *web.Context) string {
 	sessionH := session.Start(ctx, h)
 	defer sessionH.Save()
 	if sessionH.Data["logged"] == nil {
@@ -219,7 +221,7 @@ func adminListPagesGet(ctx *web.Context) string {
 	return render(output, "List Pages")
 }
 
-func adminEditPageGet(ctx *web.Context, id string) string {
+func (c *Admin) EditPageGet(ctx *web.Context, id string) string {
 	sessionH := session.Start(ctx, h)
 	defer sessionH.Save()
 	if sessionH.Data["logged"] == nil {
@@ -233,7 +235,7 @@ func adminEditPageGet(ctx *web.Context, id string) string {
 	return render(output, "Edit Post")
 }
 
-func adminEditPagePost(ctx *web.Context, id string) {
+func (c *Admin) EditPagePost(ctx *web.Context, id string) {
 	sessionH := session.Start(ctx, h)
 	defer sessionH.Save()
 	if sessionH.Data["logged"] == nil {
@@ -246,7 +248,7 @@ func adminEditPagePost(ctx *web.Context, id string) {
 	ctx.Redirect(302, "/admin/page/list")
 }
 
-func adminDelPage(ctx *web.Context, id string) {
+func (c *Admin) DelPage(ctx *web.Context, id string) {
 	sessionH := session.Start(ctx, h)
 	defer sessionH.Save()
 	if sessionH.Data["logged"] == nil {
