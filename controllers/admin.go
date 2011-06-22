@@ -85,7 +85,12 @@ func (c *Admin) NewPostGet(ctx *web.Context) string {
 		ctx.Redirect(302, "/admin/login")
 		return ""
 	}
-	output := mustache.RenderFile("templates/new-post.mustache")
+	var output string
+	if _, exists := ctx.Params["markdown"]; exists {
+		output = mustache.RenderFile("templates/new-post-markdown.mustache")
+	} else {
+		output = mustache.RenderFile("templates/new-post.mustache")
+	}
 	return render(output, "New Post")
 }
 
@@ -97,7 +102,12 @@ func (c *Admin) NewPostPost(ctx *web.Context) {
 		return
 	}
 	p := PostModelInit()
-	p.Create(ctx.Params["title"], ctx.Params["content"], ctx.Params["status"])
+	var markdown uint
+	markdown = 0
+	if _, exists := ctx.Params["markdown"]; exists {
+		markdown = 1
+	}
+	p.Create(ctx.Params["title"], ctx.Params["content"], ctx.Params["status"], markdown)
 	ctx.Redirect(302, "/admin/post/list")
 }
 
@@ -136,7 +146,13 @@ func (c *Admin) EditPostGet(ctx *web.Context, postId string) string {
 	if result.Status == 1 {
 		templateVars["Publish"] = 1
 	}
-	output := mustache.RenderFile("templates/edit-post.mustache", templateVars)
+	var output string
+	if result.Type == 1 {
+		output = mustache.RenderFile("templates/edit-post-markdown.mustache", templateVars)
+	} else {
+		output = mustache.RenderFile("templates/edit-post.mustache", templateVars)
+	}
+	
 	return render(output, "Edit Post")
 }
 

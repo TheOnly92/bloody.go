@@ -7,6 +7,7 @@ import (
 	"time"
 	"math"
 	"strconv"
+	"github.com/russross/blackfriday"
 )
 
 type Post struct {
@@ -16,15 +17,28 @@ type Post struct {
 	Created		int64 "timestamp"
 	Modified	int64
 	Status		uint
+	Type		uint
 }
 
 type PostModel struct {
 	c			mgo.Collection
+	extensions	uint32
+	html_flags	int
 }
 
 func PostModelInit() *PostModel {
 	p := new(PostModel)
 	p.c = mSession.DB(config.Get("mongodb")).C("posts")
+	p.extensions |= blackfriday.EXTENSION_NO_INTRA_EMPHASIS
+	p.extensions |= blackfriday.EXTENSION_TABLES
+	p.extensions |= blackfriday.EXTENSION_FENCED_CODE
+	p.extensions |= blackfriday.EXTENSION_AUTOLINK
+	p.extensions |= blackfriday.EXTENSION_STRIKETHROUGH
+	p.extensions |= blackfriday.EXTENSION_SPACE_HEADERS
+	p.html_flags |= blackfriday.HTML_USE_XHTML
+	p.html_flags |= blackfriday.HTML_USE_SMARTYPANTS
+	p.html_flags |= blackfriday.HTML_SMARTYPANTS_FRACTIONS
+	p.html_flags |= blackfriday.HTML_SMARTYPANTS_LATEX_DASHES
 	return p
 }
 
@@ -34,6 +48,10 @@ func (post *PostModel) FrontPage() []map[string]string {
 	posts, _ := strconv.Atoi(blogConfig.Get("postsPerPage"))
 	err := post.c.Find(bson.M{"status":1}).Sort(bson.M{"timestamp":-1}).Limit(posts).For(&result, func() os.Error {
 		t := time.SecondsToLocalTime(result.Created)
+		if result.Type == 1 {
+			renderer := blackfriday.HtmlRenderer(post.html_flags)
+			result.Content = string(blackfriday.Markdown([]byte(result.Content), renderer, post.extensions))
+		}
 		results = append(results, map[string]string {"Title":result.Title, "Content":result.Content, "Date":t.Format(blogConfig.Get("dateFormat")), "Id": objectIdHex(result.Id.String())})
 		return nil
 	})
@@ -42,6 +60,15 @@ func (post *PostModel) FrontPage() []map[string]string {
 	}
 	
 	return results
+}
+
+func (post *PostModel) RenderPost(postId string) *Post {
+	result := post.Get(postId)
+	if result.Type == 1 {
+		renderer := blackfriday.HtmlRenderer(post.html_flags)
+		result.Content = string(blackfriday.Markdown([]byte(result.Content), renderer, post.extensions))
+	}
+	return result
 }
 
 func (post *PostModel) Get(postId string) *Post {
@@ -117,10 +144,10 @@ func (post *PostModel) PostListing(page int) []map[string]string {
 	return results
 }
 
-func (post *PostModel) Create(title string, content string, status string) {
+func (post *PostModel) Create(title string, content string, status string, markdown uint) {
 	t := time.LocalTime()
 	tmp, _ := strconv.Atoui(status)
-	err := post.c.Insert(&Post{"", title, content, t.Seconds(), 0, tmp})
+	err := post.c.Insert(&Post{"", title, content, t.Seconds(), 0, tmp, markdown})
 	if err != nil {
 		panic(err)
 	}

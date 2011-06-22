@@ -20,7 +20,7 @@ func (c *Index) Index() string {
 
 func (c *Index) ReadPost(ctx *web.Context, postId string) string {
 	p := PostModelInit()
-	result := p.Get(postId)
+	result := p.RenderPost(postId)
 	
 	viewVars := make(map[string]string)
 	viewVars["Title"] = result.Title
