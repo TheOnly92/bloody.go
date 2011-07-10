@@ -22,7 +22,7 @@ type Post struct {
 
 type PostModel struct {
 	c			mgo.Collection
-	extensions	uint32
+	extensions	int
 	html_flags	int
 }
 
@@ -49,7 +49,7 @@ func (post *PostModel) FrontPage() []map[string]string {
 	err := post.c.Find(bson.M{"status":1}).Sort(bson.M{"timestamp":-1}).Limit(posts).For(&result, func() os.Error {
 		t := time.SecondsToLocalTime(result.Created)
 		if result.Type == 1 {
-			renderer := blackfriday.HtmlRenderer(post.html_flags)
+			renderer := blackfriday.HtmlRenderer(post.html_flags,"","")
 			result.Content = string(blackfriday.Markdown([]byte(result.Content), renderer, post.extensions))
 		}
 		results = append(results, map[string]string {"Title":result.Title, "Content":result.Content, "Date":t.Format(blogConfig.Get("dateFormat")), "Id": objectIdHex(result.Id.String())})
@@ -65,7 +65,7 @@ func (post *PostModel) FrontPage() []map[string]string {
 func (post *PostModel) RenderPost(postId string) *Post {
 	result := post.Get(postId)
 	if result.Type == 1 {
-		renderer := blackfriday.HtmlRenderer(post.html_flags)
+		renderer := blackfriday.HtmlRenderer(post.html_flags,"","")
 		result.Content = string(blackfriday.Markdown([]byte(result.Content), renderer, post.extensions))
 	}
 	return result
