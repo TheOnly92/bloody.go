@@ -43,6 +43,8 @@ func (preference *PreferenceModel) Get(name string) string {
 			return "2006 Jan 02 15:04"
 		case "postsPerPage":
 			return "10"
+		case "enableComment":
+			return "on"
 		}
 	} else if err != nil {
 		panic(err)

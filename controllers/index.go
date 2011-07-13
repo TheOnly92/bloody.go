@@ -43,6 +43,12 @@ func (c *Index) ReadPost(ctx *web.Context, postId string) string {
 		}
 	}
 	
+	if blogConfig.Get("enableComment") != "" {
+		viewVars["EnableComment"] = true
+	} else {
+		viewVars["EnableComment"] = false
+	}
+	
 	// Render comments
 	comments := make([]map[string]string,0)
 	for i, v := range result.Comments {

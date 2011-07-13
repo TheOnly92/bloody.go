@@ -61,7 +61,12 @@ func (c *Admin) PreferencesGet(ctx *web.Context) string {
 		return ""
 	}
 	
-	output := mustache.RenderFile("templates/preferences.mustache", map[string]string {"DateFormat": blogConfig.Get("dateFormat"), "PostsPerPage": blogConfig.Get("postsPerPage")})
+	vars := map[string]string {"DateFormat": blogConfig.Get("dateFormat"), "PostsPerPage": blogConfig.Get("postsPerPage")}
+	comment := blogConfig.Get("enableComment")
+	if comment != "" {
+		vars["EnableComment"] = comment
+	}
+	output := mustache.RenderFile("templates/preferences.mustache", vars)
 	return render(output, "Blog Preferernces")
 }
 
@@ -75,6 +80,7 @@ func (c *Admin) PreferencesPost(ctx *web.Context) {
 	
 	blogConfig.Update("dateFormat", ctx.Params["dateFormat"])
 	blogConfig.Update("postsPerPage", ctx.Params["postsPerPage"])
+	blogConfig.Update("enableComment", ctx.Params["enableComment"])
 	ctx.Redirect(302, "/admin/preferences")
 }
 
