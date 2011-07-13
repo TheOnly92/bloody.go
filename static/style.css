@@ -116,3 +116,25 @@ label {
 	text-align: center;
 	font-size: 12px;
 }
+
+#Comments {
+	margin-top: 20px;
+	border-top: solid 1px #D7D7D7;
+}
+
+#Comment {
+	margin-bottom: 30px;
+}
+
+#Comment #Meta {
+	font-size: 0.9em;
+	color: #797979;
+}
+
+#Comment #Author {
+	color: #339933;
+}
+
+#Comment #Number {
+	font-weight: bold;
+}

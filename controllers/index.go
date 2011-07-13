@@ -18,11 +18,17 @@ func (c *Index) Index() string {
 	return render(output, "")
 }
 
+func (c *Index) NewComment(ctx *web.Context, postId string) {
+	p := PostModelInit()
+	p.InsertComment(postId,ctx.Params["comment"],ctx.Params["author"])
+	ctx.Redirect(302,"/post/"+postId)
+}
+
 func (c *Index) ReadPost(ctx *web.Context, postId string) string {
 	p := PostModelInit()
 	result := p.RenderPost(postId)
 	
-	viewVars := make(map[string]string)
+	viewVars := make(map[string]interface{})
 	viewVars["Title"] = result.Title
 	viewVars["Content"] = result.Content
 	viewVars["Date"] = time.SecondsToLocalTime(result.Created).Format(blogConfig.Get("dateFormat"))
@@ -37,6 +43,18 @@ func (c *Index) ReadPost(ctx *web.Context, postId string) string {
 		}
 	}
 	
+	// Render comments
+	comments := make([]map[string]string,0)
+	for i, v := range result.Comments {
+		comments = append(comments, map[string]string{
+			"Number": strconv.Itoa(i+1),
+			"Date": time.SecondsToLocalTime(v.Created).Format(blogConfig.Get("dateFormat")),
+			"Id": v.Id[0:9],
+			"RealId": v.Id,
+			"Content": v.Content,
+			"Author": v.Author})
+	}
+	viewVars["Comments"] = comments
 	
 	if next, exists := p.GetNextId(objectIdHex(result.Id.String())); exists {
 		viewVars["Next"] = next

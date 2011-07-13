@@ -116,6 +116,7 @@ func main() {
 	web.Get("/post/list", web.MethodHandler(i, "ListPosts"))
 	web.Get("/post/([A-Za-z0-9]+)", web.MethodHandler(i, "ReadPost"))
 	web.Get("/page/([a-z0-9\\-]+)\\.html", web.MethodHandler(i, "ReadPage"))
+	web.Post("/post/([A-Za-z0-9]+)/comment/new", web.MethodHandler(i, "NewComment"))
 	web.Get("/admin", web.MethodHandler(a, "IndexGet"))
 	web.Get("/admin/preferences", web.MethodHandler(a, "PreferencesGet"))
 	web.Post("/admin/preferences", web.MethodHandler(a, "PreferencesPost"))

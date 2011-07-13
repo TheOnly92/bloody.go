@@ -5,6 +5,9 @@ import (
 	"launchpad.net/mgo"
 	"os"
 	"time"
+	"hash"
+	"crypto/sha1"
+	"encoding/hex"
 	"math"
 	"strconv"
 	"github.com/russross/blackfriday"
@@ -18,6 +21,14 @@ type Post struct {
 	Modified	int64
 	Status		uint
 	Type		uint
+	Comments	[]Comment
+}
+
+type Comment struct {
+	Id			string
+	Content		string
+	Author		string
+	Created		int64
 }
 
 type PostModel struct {
@@ -64,9 +75,14 @@ func (post *PostModel) FrontPage() []map[string]string {
 
 func (post *PostModel) RenderPost(postId string) *Post {
 	result := post.Get(postId)
+	renderer := blackfriday.HtmlRenderer(post.html_flags,"","")
 	if result.Type == 1 {
-		renderer := blackfriday.HtmlRenderer(post.html_flags,"","")
 		result.Content = string(blackfriday.Markdown([]byte(result.Content), renderer, post.extensions))
+	}
+	
+	// Also render all blog comments as markdown
+	for i, v := range result.Comments {
+		result.Comments[i].Content = string(blackfriday.Markdown([]byte(v.Content), renderer, post.extensions))
 	}
 	return result
 }
@@ -147,7 +163,25 @@ func (post *PostModel) PostListing(page int) []map[string]string {
 func (post *PostModel) Create(title string, content string, status string, markdown uint) {
 	t := time.LocalTime()
 	tmp, _ := strconv.Atoui(status)
-	err := post.c.Insert(&Post{"", title, content, t.Seconds(), 0, tmp, markdown})
+	err := post.c.Insert(&Post{"", title, content, t.Seconds(), 0, tmp, markdown, make([]Comment,0)})
+	if err != nil {
+		panic(err)
+	}
+}
+
+func (post *PostModel) InsertComment(postId string, content string, author string) {
+	result := post.Get(postId)
+	if author == "" {
+		author = "Anonymous"
+	}
+	// Generate ID
+	t := time.LocalTime()
+	var h hash.Hash = sha1.New()
+	h.Write([]byte(author+strconv.Itoa64(t.Seconds())))
+	id := hex.EncodeToString(h.Sum())
+	comment := Comment{id, content, author, t.Seconds()}
+	result.Comments = append(result.Comments, comment)
+	err := post.c.Update(bson.M{"_id":bson.ObjectIdHex(postId)},result)
 	if err != nil {
 		panic(err)
 	}

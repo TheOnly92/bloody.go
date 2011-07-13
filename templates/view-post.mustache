@@ -1,7 +1,7 @@
 <div style="font-size: 12px; width: 300px; margin: 0px auto;">
-	<span style="text-align: right; width: 100px; display: block; float: left;">{{#Last}}<a href="/post/{{Last}}">&laquo; Last Entry</a>{{/Last}}{{^Last}}&nbsp;{{/Last}}</span>
+	<span style="text-align: right; width: 100px; display: block; float: left;">{{#Next}}<a href="/post/{{Next}}">&laquo; Next Entry</a>{{/Next}}{{^Next}}&nbsp;{{/Next}}</span>
 	<span style="width: 100px; text-align: center; display: block; float: left;">| <a href="/post/list">Blog Entries</a> |</span>
-	<span style="width: 100px; display: block; float: left;">{{#Next}}<a href="/post/{{Next}}">Next Entry &raquo;</a>{{/Next}}</span>
+	<span style="width: 100px; display: block; float: left;">{{#Last}}<a href="/post/{{Last}}">Last Entry &raquo;</a>{{/Last}}</span>
 	<div style="clear: both;"></div>
 </div>
 <div id="Post">
@@ -9,9 +9,26 @@
 	<div id="Content">{{{Content}}}</div>
 	<p id="Info">{{Date}} | <a href="/post/{{Id}}">Permalink</a></p>
 </div>
-<div style="font-size: 12px; width: 300px; margin: 10px auto;">
-	<span style="text-align: right; width: 100px; display: block; float: left;">{{#Last}}<a href="/post/{{Last}}">&laquo; Last Entry</a>{{/Last}}{{^Last}}&nbsp;{{/Last}}</span>
+<div style="font-size: 12px; width: 300px; margin: 0px auto;">
+	<span style="text-align: right; width: 100px; display: block; float: left;">{{#Next}}<a href="/post/{{Next}}">&laquo; Next Entry</a>{{/Next}}{{^Next}}&nbsp;{{/Next}}</span>
 	<span style="width: 100px; text-align: center; display: block; float: left;">| <a href="/post/list">Blog Entries</a> |</span>
-	<span style="width: 100px; display: block; float: left;">{{#Next}}<a href="/post/{{Next}}">Next Entry &raquo;</a>{{/Next}}</span>
+	<span style="width: 100px; display: block; float: left;">{{#Last}}<a href="/post/{{Last}}">Last Entry &raquo;</a>{{/Last}}</span>
 	<div style="clear: both;"></div>
+</div>
+<div id="Comments">
+	{{#Comments}}
+	<a id="comment-{{Id}}"></a>
+	<div id="Comment">
+		<p id="Meta"><span id="Number">{{Number}}</span> : <span id="Author">{{Author}}</span> : <span id="Date">{{Date}}</span> ID: <span id="ID">{{Id}}</span></p>
+		<div id="Content">{{{Content}}}</div>
+	</div>
+	{{/Comments}}
+	<div style="margin-top: 10px;">
+		<form method="post" action="/post/{{Id}}/comment/new">
+			<textarea name="comment" id="comment" style="width: 99%; height: 100px; border: 1px solid #AAAAAA; padding: 3px;"></textarea>
+			<p><label for="author" style="padding: 2px;">Name</label><input type="text" id="author" name="author" value="Anonymous" /></p>
+			<input type="submit" value="Submit Comment" style="margin-top: 5px; float: right;" />
+		</form>
+		<div style="clear: both;"></div>
+	</div>
 </div>
