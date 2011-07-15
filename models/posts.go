@@ -46,6 +46,7 @@ func PostModelInit() *PostModel {
 	p.extensions |= blackfriday.EXTENSION_AUTOLINK
 	p.extensions |= blackfriday.EXTENSION_STRIKETHROUGH
 	p.extensions |= blackfriday.EXTENSION_SPACE_HEADERS
+	p.extensions |= blackfriday.EXTENSION_HARD_LINE_BREAK
 	p.html_flags |= blackfriday.HTML_USE_XHTML
 	p.html_flags |= blackfriday.HTML_USE_SMARTYPANTS
 	p.html_flags |= blackfriday.HTML_SMARTYPANTS_FRACTIONS
