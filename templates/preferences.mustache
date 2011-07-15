@@ -5,7 +5,9 @@
 	<label for="postsPerPage"><abbr title="Posts Per Page">PPP</abbr></label>
 	<input type="text" id="postsPerPage" name="postsPerPage" style="width: 300px" value="{{PostsPerPage}}" /><br />
 	<label for="enableComment">Comment?</label>
-	<input type="checkbox" id="enableComment" name="enableComment"{{#EnableComment}} checked="checked"{{/EnableComment}} />
+	<input type="checkbox" id="enableComment" name="enableComment"{{#EnableComment}} checked="checked"{{/EnableComment}} /><br />
+	<label for="markdown">Markdown?</label>
+	<input type="checkbox" id="markdown" name="markdown"{{#markdown}} checked="checked"{{/markdown}} />
 	<br />
 	<input type="submit" value="Save!" />
 </form>

@@ -66,6 +66,9 @@ func (c *Admin) PreferencesGet(ctx *web.Context) string {
 	if comment != "" {
 		vars["EnableComment"] = comment
 	}
+	if blogConfig.Get("markdown") == "1" {
+		vars["markdown"] = "1"
+	}
 	output := mustache.RenderFile("templates/preferences.mustache", vars)
 	return render(output, "Blog Preferernces")
 }
@@ -81,6 +84,11 @@ func (c *Admin) PreferencesPost(ctx *web.Context) {
 	blogConfig.Update("dateFormat", ctx.Params["dateFormat"])
 	blogConfig.Update("postsPerPage", ctx.Params["postsPerPage"])
 	blogConfig.Update("enableComment", ctx.Params["enableComment"])
+	markdown := "0"
+	if ctx.Params["markdown"] == "on" {
+		markdown = "1"
+	}
+	blogConfig.Update("markdown", markdown)
 	ctx.Redirect(302, "/admin/preferences")
 }
 
@@ -131,7 +139,12 @@ func (c *Admin) ListPost(ctx *web.Context) string {
 	p := PostModelInit()
 	results := p.PostListing(page)
 	
-	output := mustache.RenderFile("templates/list-post.mustache", map[string][]map[string]string {"posts":results})
+	vars := map[string]interface{} {"posts":results}
+	if blogConfig.Get("markdown") == "1" {
+		vars["markdown"] = "1"
+	}
+	
+	output := mustache.RenderFile("templates/list-post.mustache", vars)
 	return render(output, "List Posts")
 }
 

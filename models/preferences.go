@@ -45,6 +45,8 @@ func (preference *PreferenceModel) Get(name string) string {
 			return "10"
 		case "enableComment":
 			return "on"
+		case "markdown":
+			return "0"
 		}
 	} else if err != nil {
 		panic(err)
