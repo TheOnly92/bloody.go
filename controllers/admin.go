@@ -282,3 +282,17 @@ func (c *Admin) DelPage(ctx *web.Context, id string) {
 	
 	ctx.Redirect(302, "/admin/page/list")
 }
+
+func (c *Admin) DelComment(ctx *web.Context, postId string, id string) {
+	sessionH := session.Start(ctx, h)
+	defer sessionH.Save()
+	if sessionH.Data["logged"] == nil {
+		ctx.Redirect(302, "/admin/login")
+		return
+	}
+	
+	p := PostModelInit()
+	p.DeleteComment(postId, id)
+	
+	ctx.Redirect(302, "/post/"+postId)
+}

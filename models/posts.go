@@ -187,6 +187,25 @@ func (post *PostModel) InsertComment(postId string, content string, author strin
 	}
 }
 
+func (post *PostModel) DeleteComment(postId string, id string) {
+	result := post.Get(postId)
+	
+	// Copy everything from the old one and skip those that we want to delete
+	newComments := make([]Comment,0)
+	for _, comment := range result.Comments {
+		if comment.Id != id {
+			newComments = append(newComments, comment)
+		}
+	}
+	result.Comments = newComments
+	
+	// Save result
+	err := post.c.Update(bson.M{"_id":bson.ObjectIdHex(postId)},result)
+	if err != nil {
+		panic(err)
+	}
+}
+
 func (post *PostModel) Update(title string, content string, status string, postId string) {
 	result := post.Get(postId)
 	result.Title = title

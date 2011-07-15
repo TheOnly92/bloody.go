@@ -33,6 +33,8 @@ func (c *Index) ReadPost(ctx *web.Context, postId string) string {
 	viewVars["Content"] = result.Content
 	viewVars["Date"] = time.SecondsToLocalTime(result.Created).Format(blogConfig.Get("dateFormat"))
 	viewVars["Id"] = objectIdHex(result.Id.String())
+	// To be used within the {{Comments}} blog
+	viewVars["PostId"] = objectIdHex(result.Id.String())
 	
 	if result.Status == 0 {
 		sessionH := session.Start(ctx, h)
@@ -67,6 +69,14 @@ func (c *Index) ReadPost(ctx *web.Context, postId string) string {
 	}
 	if last, exists := p.GetLastId(objectIdHex(result.Id.String())); exists {
 		viewVars["Last"] = last
+	}
+	
+	
+	sessionH := session.Start(ctx, h)
+	defer sessionH.Save()
+	viewVars["Admin"] = false
+	if sessionH.Data["logged"] != nil {
+		viewVars["Admin"] = true
 	}
 	
 	output := mustache.RenderFile("templates/view-post.mustache", viewVars)

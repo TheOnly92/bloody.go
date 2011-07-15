@@ -15,11 +15,12 @@
 	<span style="width: 100px; display: block; float: left;">{{#Last}}<a href="/post/{{Last}}">Last Entry &raquo;</a>{{/Last}}</span>
 	<div style="clear: both;"></div>
 </div>
+{{#EnableComment}}
 <div id="Comments">
 	{{#Comments}}
 	<a id="comment-{{Id}}"></a>
 	<div id="Comment">
-		<p id="Meta"><span id="Number">{{Number}}</span> : <span id="Author">{{Author}}</span> : <span id="Date">{{Date}}</span> ID: <span id="ID">{{Id}}</span></p>
+		<p id="Meta"><span id="Number">{{Number}}</span> : <span id="Author">{{Author}}</span> : <span id="Date">{{Date}}</span> ID: <span id="ID">{{Id}}</span>{{#Admin}}<span style="float: right;"><a href="/admin/comment/del/{{PostId}}/{{RealId}}">Delete</a></span>{{/Admin}}</p>
 		<div id="Content">{{{Content}}}</div>
 	</div>
 	{{/Comments}}
@@ -32,3 +33,4 @@
 		<div style="clear: both;"></div>
 	</div>
 </div>
+{{/EnableComment}}
