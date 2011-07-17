@@ -33,7 +33,7 @@ func (c *Admin) LoginGet(ctx *web.Context) string {
 		ctx.Redirect(302, "/admin/post/list")
 		return ""
 	}
-	output := mustache.RenderFile("templates/admin-login.mustache")
+	output := mustache.RenderFile("templates/admin/login.mustache")
 	return render(output, "Login")
 }
 
@@ -69,7 +69,7 @@ func (c *Admin) PreferencesGet(ctx *web.Context) string {
 	if blogConfig.Get("markdown") == "1" {
 		vars["markdown"] = "1"
 	}
-	output := mustache.RenderFile("templates/preferences.mustache", vars)
+	output := mustache.RenderFile("templates/admin/preferences.mustache", vars)
 	return render(output, "Blog Preferernces")
 }
 
@@ -101,9 +101,9 @@ func (c *Admin) NewPostGet(ctx *web.Context) string {
 	}
 	var output string
 	if _, exists := ctx.Params["markdown"]; exists {
-		output = mustache.RenderFile("templates/new-post-markdown.mustache")
+		output = mustache.RenderFile("templates/admin/new-post-markdown.mustache")
 	} else {
-		output = mustache.RenderFile("templates/new-post.mustache")
+		output = mustache.RenderFile("templates/admin/new-post.mustache")
 	}
 	return render(output, "New Post")
 }
@@ -144,7 +144,7 @@ func (c *Admin) ListPost(ctx *web.Context) string {
 		vars["markdown"] = "1"
 	}
 	
-	output := mustache.RenderFile("templates/list-post.mustache", vars)
+	output := mustache.RenderFile("templates/admin/list-post.mustache", vars)
 	return render(output, "List Posts")
 }
 
@@ -167,9 +167,9 @@ func (c *Admin) EditPostGet(ctx *web.Context, postId string) string {
 	}
 	var output string
 	if result.Type == 1 {
-		output = mustache.RenderFile("templates/edit-post-markdown.mustache", templateVars)
+		output = mustache.RenderFile("templates/admin/edit-post-markdown.mustache", templateVars)
 	} else {
-		output = mustache.RenderFile("templates/edit-post.mustache", templateVars)
+		output = mustache.RenderFile("templates/admin/edit-post.mustache", templateVars)
 	}
 	
 	return render(output, "Edit Post")
@@ -226,7 +226,7 @@ func (c *Admin) NewPageGet(ctx *web.Context) string {
 		ctx.Redirect(302, "/admin/login")
 		return ""
 	}
-	output := mustache.RenderFile("templates/new-page.mustache")
+	output := mustache.RenderFile("templates/admin/new-page.mustache")
 	return render(output, "New Page")
 }
 
@@ -266,7 +266,7 @@ func (c *Admin) EditPageGet(ctx *web.Context, id string) string {
 	p := PageModelInit()
 	result := p.Get(id)
 	
-	output := mustache.RenderFile("templates/edit-page.mustache", map[string]string {"Title":result.Title, "Content":result.Content, "id":objectIdHex(result.Id.String())})
+	output := mustache.RenderFile("templates/admin/edit-page.mustache", map[string]string {"Title":result.Title, "Content":result.Content, "id":objectIdHex(result.Id.String())})
 	return render(output, "Edit Post")
 }
 
