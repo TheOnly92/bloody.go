@@ -9,6 +9,8 @@ import (
 	"hash"
 	"strconv"
 	"encoding/hex"
+	"exec"
+	"os"
 	//"fmt"
 	//"reflect"
 )
@@ -308,4 +310,23 @@ func (c *Admin) DelComment(ctx *web.Context, postId string, id string) {
 	p.DeleteComment(postId, id)
 	
 	ctx.Redirect(302, "/post/"+postId)
+}
+
+func (c *Admin) RestartBloody(ctx *web.Context) string {
+	sessionH := session.Start(ctx, h)
+	defer sessionH.Save()
+	if sessionH.Data["logged"] == nil {
+		ctx.Redirect(302, "/admin/login")
+		return
+	}
+	
+	pid := os.Getpid()
+	dir, _ := os.Getwd()
+	command1 := exec.Command("kill",strconv.Itoa(pid))
+	command2 := exec.Command(dir+"/bloody")
+	command2.Start()
+	command1.Start()
+	
+	output := mustache.RenderFile("templates/admin/restart.mustache")
+	return render(output, "Restarting Bloody")
 }
