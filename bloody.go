@@ -136,5 +136,6 @@ func main() {
 	web.Post("/admin/page/edit/(.*)", web.MethodHandler(a, "EditPagePost"))
 	web.Get("/admin/page/del/(.*)", web.MethodHandler(a, "DelPage"))
 	web.Get("/admin/comment/del/(.*)/(.*)", web.MethodHandler(a, "DelComment"))
+	web.Get("/admin/bloody/restart", web.MethodHandler(a, "RestartBloody"))
 	web.Run(config.Get("host")+":"+config.Get("port"))
 }
