@@ -317,7 +317,7 @@ func (c *Admin) RestartBloody(ctx *web.Context) string {
 	defer sessionH.Save()
 	if sessionH.Data["logged"] == nil {
 		ctx.Redirect(302, "/admin/login")
-		return
+		return ""
 	}
 	
 	pid := os.Getpid()
