@@ -4,7 +4,7 @@ import(
 	"os"
 	"path/filepath"
 	"io/ioutil"
-	"json"
+	"encoding/json"
 )
 
 type Config map[string]string

@@ -3,7 +3,6 @@ package main
 import (
 	"web"
 	"launchpad.net/mgo"
-	"os"
 	"./mustache"
 	"regexp"
 	"./session"
@@ -25,7 +24,7 @@ var layout *mustache.Template
 var blogConfig *PreferenceModel
 
 func initMongo() {
-	var err os.Error
+	var err error
 	mSession, err = mgo.Mongo(config.Get("mongohost"))
 	if err != nil {
 		panic(err)

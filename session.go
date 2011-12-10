@@ -2,14 +2,14 @@ package session
 
 import (
 	"crypto/sha1"
-	"http"
+	"net/http"
 	"time"
 	"hash"
 	"web"
 	"launchpad.net/mgo"
 	"launchpad.net/gobson/bson"
 	"encoding/hex"
-	"json"
+	"encoding/json"
 	"strconv"
 )
 
@@ -42,7 +42,7 @@ func Start(ctx *web.Context, handler *MHandler) *Session {
 		t := make(map[string]interface{})
 		session.Data = t
 	}
-	ctx.SetCookie("bloody_sess", session.GetID(), time.LocalTime().Seconds() + 3600)
+	ctx.SetCookie("bloody_sess", session.GetID(), time.Now().Unix() + 3600)
 	return session
 }
 
@@ -53,10 +53,10 @@ func (session *Session) Save() {
 func (session *Session) generateId() string {
 	var header = make(http.Header)
 	remoteAddr := header.Get("REMOTE_ADDR")
-	t := time.LocalTime()
+	t := time.Now()
 	var h hash.Hash = sha1.New()
-	h.Write([]byte(remoteAddr+strconv.Itoa64(t.Seconds())))
-	session.id = hex.EncodeToString(h.Sum())
+	h.Write([]byte(remoteAddr+strconv.FormatInt(t.Unix(),10)))
+	session.id = hex.EncodeToString(h.Sum(nil))
 	return session.id
 }
 
@@ -80,16 +80,16 @@ type sessionRow struct {
 
 func (handler *MHandler) Store(id string, data map[string]interface{}) {
 	c := handler.session.DB("bloody").C("sessions")
-	t := time.LocalTime()
+	t := time.Now()
 	b, _ := json.Marshal(data)
 	var sav sessionRow
 	sav.SessionID = id
-	sav.ExpirationTS = t.Seconds()+1440
+	sav.ExpirationTS = t.Unix()+1440
 	sav.SessionData = b
 	err := c.Update(bson.M{"sessionid": id}, sav)
 	if err != nil {
 		if err == mgo.NotFound {
-			err = c.Insert(&sessionRow{id, t.Seconds()+1440, b})
+			err = c.Insert(&sessionRow{id, t.Unix()+1440, b})
 			if err != nil {
 				panic(err)
 			}
@@ -101,8 +101,8 @@ func (handler *MHandler) Store(id string, data map[string]interface{}) {
 
 func (handler *MHandler) Clean() {
 	c := handler.session.DB("bloody").C("sessions")
-	t := time.LocalTime()
-	err := c.RemoveAll(bson.M{"expirationts": bson.M{"$lt":t.Seconds()}})
+	t := time.Now()
+	err := c.RemoveAll(bson.M{"expirationts": bson.M{"$lt":t.Unix()}})
 	if err != nil {
 		panic(err)
 	}

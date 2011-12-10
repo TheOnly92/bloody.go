@@ -9,7 +9,7 @@ import (
 	"hash"
 	"strconv"
 	"encoding/hex"
-	"exec"
+	"os/exec"
 	"os"
 	//"fmt"
 	//"reflect"

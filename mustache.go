@@ -2,11 +2,11 @@ package mustache
 
 import (
     "bytes"
-    "container/vector"
     "fmt"
     "io"
     "io/ioutil"
     "os"
+    "errors"
     "path"
     "reflect"
     "strings"
@@ -25,7 +25,7 @@ type sectionElement struct {
     name      string
     inverted  bool
     startline int
-    elems     *vector.Vector
+    elems     *[]interface{}
 }
 
 type Template struct {
@@ -35,7 +35,7 @@ type Template struct {
     p       int
     curline int
     dir     string
-    elems   *vector.Vector
+    elems   *[]interface{}
 }
 
 type parseError struct {
@@ -43,7 +43,7 @@ type parseError struct {
     message string
 }
 
-func (p parseError) String() string { return fmt.Sprintf("line %d: %s", p.line, p.message) }
+func (p parseError) Error() string { return fmt.Sprintf("line %d: %s", p.line, p.message) }
 
 var (
     esc_quot = []byte("&quot;")
@@ -79,13 +79,13 @@ func htmlEscape(w io.Writer, s []byte) {
     w.Write(s[last:])
 }
 
-func (tmpl *Template) readString(s string) (string, os.Error) {
+func (tmpl *Template) readString(s string) (string, error) {
     i := tmpl.p
     newlines := 0
     for true {
         //are we at the end of the string?
         if i+len(s) > len(tmpl.data) {
-            return tmpl.data[tmpl.p:], os.EOF
+            return tmpl.data[tmpl.p:], io.EOF
         }
 
         if tmpl.data[i] == '\n' {
@@ -121,7 +121,7 @@ func (tmpl *Template) readString(s string) (string, os.Error) {
     return "", nil
 }
 
-func (tmpl *Template) parsePartial(name string) (*Template, os.Error) {
+func (tmpl *Template) parsePartial(name string) (*Template, error) {
     filenames := []string{
         path.Join(tmpl.dir, name),
         path.Join(tmpl.dir, name+".mustache"),
@@ -140,7 +140,7 @@ func (tmpl *Template) parsePartial(name string) (*Template, os.Error) {
         }
     }
     if filename == "" {
-        return nil, os.NewError(fmt.Sprintf("Could not find partial %q", name))
+        return nil, errors.New(fmt.Sprintf("Could not find partial %q", name))
     }
 
     partial, err := ParseFile(filename)
@@ -152,24 +152,24 @@ func (tmpl *Template) parsePartial(name string) (*Template, os.Error) {
     return partial, nil
 }
 
-func (tmpl *Template) parseSection(section *sectionElement) os.Error {
+func (tmpl *Template) parseSection(section *sectionElement) error {
     for {
         text, err := tmpl.readString(tmpl.otag)
 
-        if err == os.EOF {
+        if err == io.EOF {
             return parseError{section.startline, "Section " + section.name + " has no closing tag"}
         }
 
         // put text into an item
         text = text[0 : len(text)-len(tmpl.otag)]
-        section.elems.Push(&textElement{[]byte(text)})
+        *section.elems = append(*section.elems, &textElement{[]byte(text)})
         if tmpl.p < len(tmpl.data) && tmpl.data[tmpl.p] == '{' {
             text, err = tmpl.readString("}" + tmpl.ctag)
         } else {
             text, err = tmpl.readString(tmpl.ctag)
         }
 
-        if err == os.EOF {
+        if err == io.EOF {
             //put the remaining text in a block
             return parseError{tmpl.curline, "unmatched open tag"}
         }
@@ -194,12 +194,12 @@ func (tmpl *Template) parseSection(section *sectionElement) os.Error {
                 tmpl.p += 2
             }
 
-            se := sectionElement{name, tag[0] == '^', tmpl.curline, new(vector.Vector)}
+            se := sectionElement{name, tag[0] == '^', tmpl.curline, new([]interface{})}
             err := tmpl.parseSection(&se)
             if err != nil {
                 return err
             }
-            section.elems.Push(&se)
+            *section.elems = append(*section.elems, &se)
         case '/':
             name := strings.TrimSpace(tag[1:])
             if name != section.name {
@@ -213,13 +213,13 @@ func (tmpl *Template) parseSection(section *sectionElement) os.Error {
             if err != nil {
                 return err
             }
-            section.elems.Push(partial)
+            *section.elems = append(*section.elems, partial)
         case '=':
             if tag[len(tag)-1] != '=' {
                 return parseError{tmpl.curline, "Invalid meta tag"}
             }
             tag = strings.TrimSpace(tag[1 : len(tag)-1])
-            newtags := strings.Split(tag, " ", 2)
+            newtags := strings.SplitN(tag, " ", 2)
             if len(newtags) == 2 {
                 tmpl.otag = newtags[0]
                 tmpl.ctag = newtags[1]
@@ -227,29 +227,29 @@ func (tmpl *Template) parseSection(section *sectionElement) os.Error {
         case '{':
             if tag[len(tag)-1] == '}' {
                 //use a raw tag
-                section.elems.Push(&varElement{tag[1 : len(tag)-1], true})
+                *section.elems = append(*section.elems, &varElement{tag[1 : len(tag)-1], true})
             }
         default:
-            section.elems.Push(&varElement{tag, false})
+            *section.elems = append(*section.elems, &varElement{tag, false})
         }
     }
 
     return nil
 }
 
-func (tmpl *Template) parse() os.Error {
+func (tmpl *Template) parse() error {
     for {
         text, err := tmpl.readString(tmpl.otag)
 
-        if err == os.EOF {
+        if err == io.EOF {
             //put the remaining text in a block
-            tmpl.elems.Push(&textElement{[]byte(text)})
+            *tmpl.elems = append(*tmpl.elems, &textElement{[]byte(text)})
             return nil
         }
 
         // put text into an item
         text = text[0 : len(text)-len(tmpl.otag)]
-        tmpl.elems.Push(&textElement{[]byte(text)})
+        *tmpl.elems = append(*tmpl.elems, &textElement{[]byte(text)})
 
         if tmpl.p < len(tmpl.data) && tmpl.data[tmpl.p] == '{' {
             text, err = tmpl.readString("}" + tmpl.ctag)
@@ -257,7 +257,7 @@ func (tmpl *Template) parse() os.Error {
             text, err = tmpl.readString(tmpl.ctag)
         }
 
-        if err == os.EOF {
+        if err == io.EOF {
             //put the remaining text in a block
             return parseError{tmpl.curline, "unmatched open tag"}
         }
@@ -280,12 +280,12 @@ func (tmpl *Template) parse() os.Error {
                 tmpl.p += 2
             }
 
-            se := sectionElement{name, tag[0] == '^', tmpl.curline, new(vector.Vector)}
+            se := sectionElement{name, tag[0] == '^', tmpl.curline, new([]interface{})}
             err := tmpl.parseSection(&se)
             if err != nil {
                 return err
             }
-            tmpl.elems.Push(&se)
+            *tmpl.elems = append(*tmpl.elems, &se)
         case '/':
             return parseError{tmpl.curline, "unmatched close tag"}
         case '>':
@@ -294,13 +294,13 @@ func (tmpl *Template) parse() os.Error {
             if err != nil {
                 return err
             }
-            tmpl.elems.Push(partial)
+            *tmpl.elems = append(*tmpl.elems, partial)
         case '=':
             if tag[len(tag)-1] != '=' {
                 return parseError{tmpl.curline, "Invalid meta tag"}
             }
             tag = strings.TrimSpace(tag[1 : len(tag)-1])
-            newtags := strings.Split(tag, " ", 2)
+            newtags := strings.SplitN(tag, " ", 2)
             if len(newtags) == 2 {
                 tmpl.otag = newtags[0]
                 tmpl.ctag = newtags[1]
@@ -308,10 +308,10 @@ func (tmpl *Template) parse() os.Error {
         case '{':
             //use a raw tag
             if tag[len(tag)-1] == '}' {
-                tmpl.elems.Push(&varElement{tag[1 : len(tag)-1], true})
+                *tmpl.elems = append(*tmpl.elems, &varElement{tag[1 : len(tag)-1], true})
             }
         default:
-            tmpl.elems.Push(&varElement{tag, false})
+            *tmpl.elems = append(*tmpl.elems, &varElement{tag, false})
         }
     }
 
@@ -369,10 +369,10 @@ func call(v reflect.Value, method reflect.Method) reflect.Value {
 
 // Evaluate interfaces and pointers looking for a value that can look up the name, via a
 // struct field, method, or map key, and return the result of the lookup.
-func lookup(contextChain *vector.Vector, name string) reflect.Value {
+func lookup(contextChain *[]interface{}, name string) reflect.Value {
 Outer:
-    for i := contextChain.Len() - 1; i >= 0; i-- {
-        v := contextChain.At(i).(reflect.Value)
+    for i := len(*contextChain) - 1; i >= 0; i-- {
+        v := (*contextChain)[i].(reflect.Value)
         for v.IsValid() {
             typ := v.Type()
             if n := v.Type().NumMethod(); n > 0 {
@@ -443,10 +443,10 @@ loop:
     return v
 }
 
-func renderSection(section *sectionElement, contextChain *vector.Vector, buf io.Writer) {
+func renderSection(section *sectionElement, contextChain *[]interface{}, buf io.Writer) {
     value := lookup(contextChain, section.name)
-    var context = contextChain.At(contextChain.Len() - 1).(reflect.Value)
-    var contexts = new(vector.Vector)
+    var context = (*contextChain)[len(*contextChain) - 1].(reflect.Value)
+    var contexts = new([]interface{})
     // if the value is nil, check if it's an inverted section
     isNil := isNil(value)
     if isNil && !section.inverted || !isNil && section.inverted {
@@ -456,31 +456,31 @@ func renderSection(section *sectionElement, contextChain *vector.Vector, buf io.
         switch val := valueInd; val.Kind() {
         case reflect.Slice:
             for i := 0; i < val.Len(); i++ {
-                contexts.Push(val.Index(i))
+                *contexts = append(*contexts, val.Index(i))
             }
         case reflect.Array:
             for i := 0; i < val.Len(); i++ {
-                contexts.Push(val.Index(i))
+                *contexts = append(*contexts, val.Index(i))
             }
         case reflect.Map, reflect.Struct:
-            contexts.Push(value)
+            *contexts = append(*contexts, value)
         default:
-            contexts.Push(context)
+            *contexts = append(*contexts, context)
         }
     }
 
     //by default we execute the section
-    for j := 0; j < contexts.Len(); j++ {
-        ctx := contexts.At(j).(reflect.Value)
-        contextChain.Push(ctx)
-        for i := 0; i < section.elems.Len(); i++ {
-            renderElement(section.elems.At(i), contextChain, buf)
+    for j := 0; j < len(*contexts); j++ {
+        ctx := (*contexts)[j].(reflect.Value)
+        *contextChain = append(*contextChain, ctx)
+        for i := 0; i < len(*section.elems); i++ {
+            renderElement((*section.elems)[i], contextChain, buf)
         }
-        contextChain.Pop()
+        (*contextChain) = (*contextChain)[:len(*contextChain)-1]
     }
 }
 
-func renderElement(element interface{}, contextChain *vector.Vector, buf io.Writer) {
+func renderElement(element interface{}, contextChain *[]interface{}, buf io.Writer) {
     switch elem := element.(type) {
     case *textElement:
         buf.Write(elem.text)
@@ -501,26 +501,26 @@ func renderElement(element interface{}, contextChain *vector.Vector, buf io.Writ
     }
 }
 
-func (tmpl *Template) renderTemplate(contextChain *vector.Vector, buf io.Writer) {
-    for i := 0; i < tmpl.elems.Len(); i++ {
-        renderElement(tmpl.elems.At(i), contextChain, buf)
+func (tmpl *Template) renderTemplate(contextChain *[]interface{}, buf io.Writer) {
+    for i := 0; i < len(*tmpl.elems); i++ {
+        renderElement((*tmpl.elems)[i], contextChain, buf)
     }
 }
 
 func (tmpl *Template) Render(context ...interface{}) string {
     var buf bytes.Buffer
-    var contextChain vector.Vector
+    var contextChain []interface{}
     for _, c := range context {
         val := reflect.ValueOf(c)
-        contextChain.Push(val)
+        contextChain = append(contextChain, val)
     }
     tmpl.renderTemplate(&contextChain, &buf)
     return buf.String()
 }
 
-func ParseString(data string) (*Template, os.Error) {
+func ParseString(data string) (*Template, error) {
     cwd := os.Getenv("CWD")
-    tmpl := Template{data, "{{", "}}", 0, 1, cwd, new(vector.Vector)}
+    tmpl := Template{data, "{{", "}}", 0, 1, cwd, new([]interface{})}
     err := tmpl.parse()
 
     if err != nil {
@@ -530,7 +530,7 @@ func ParseString(data string) (*Template, os.Error) {
     return &tmpl, err
 }
 
-func ParseFile(filename string) (*Template, os.Error) {
+func ParseFile(filename string) (*Template, error) {
     data, err := ioutil.ReadFile(filename)
     if err != nil {
         return nil, err
@@ -538,7 +538,7 @@ func ParseFile(filename string) (*Template, os.Error) {
 
     dirname, _ := path.Split(filename)
 
-    tmpl := Template{string(data), "{{", "}}", 0, 1, dirname, new(vector.Vector)}
+    tmpl := Template{string(data), "{{", "}}", 0, 1, dirname, new([]interface{})}
     err = tmpl.parse()
 
     if err != nil {
@@ -552,7 +552,7 @@ func Render(data string, context ...interface{}) string {
     tmpl, err := ParseString(data)
 
     if err != nil {
-        return err.String()
+        return err.Error()
     }
 
     return tmpl.Render(context...)
@@ -562,7 +562,7 @@ func RenderFile(filename string, context ...interface{}) string {
     tmpl, err := ParseFile(filename)
 
     if err != nil {
-        return err.String()
+        return err.Error()
     }
 
     return tmpl.Render(context...)
