@@ -3,7 +3,6 @@ package main
 import (
 	"launchpad.net/gobson/bson"
 	"launchpad.net/mgo"
-	"os"
 	"time"
 	"hash"
 	"crypto/sha1"
@@ -19,7 +18,7 @@ type Post struct {
 	Content		string
 	Created		int64 "timestamp"
 	Modified	int64
-	Status		uint
+	Status		uint64
 	Type		uint
 	Comments	[]Comment
 }
@@ -58,8 +57,8 @@ func (post *PostModel) FrontPage() []map[string]string {
 	var result *Post
 	results := []map[string]string{}
 	posts, _ := strconv.Atoi(blogConfig.Get("postsPerPage"))
-	err := post.c.Find(bson.M{"status":1}).Sort(bson.M{"timestamp":-1}).Limit(posts).For(&result, func() os.Error {
-		t := time.SecondsToLocalTime(result.Created)
+	err := post.c.Find(bson.M{"status":1}).Sort(bson.M{"timestamp":-1}).Limit(posts).For(&result, func() error {
+		t := time.Unix(result.Created, 0)
 		if result.Type == 1 {
 			renderer := blackfriday.HtmlRenderer(post.html_flags,"","")
 			result.Content = string(blackfriday.Markdown([]byte(result.Content), renderer, post.extensions))
@@ -139,8 +138,8 @@ func (post *PostModel) TotalPages() int {
 func (post *PostModel) PostListing(page int) []map[string]string {
 	var result *Post
 	results := []map[string]string{}
-	callback := func() os.Error {
-		t := time.SecondsToLocalTime(result.Created)
+	callback := func() error {
+		t := time.Unix(result.Created, 0)
 		p := map[string]string {"Title":result.Title, "Date":t.Format(blogConfig.Get("dateFormat")), "Id": objectIdHex(result.Id.String())}
 		if (result.Status == 0) {
 			p["Draft"] = "1"
@@ -148,7 +147,7 @@ func (post *PostModel) PostListing(page int) []map[string]string {
 		results = append(results, p)
 		return nil
 	}
-	var err os.Error
+	var err error
 	if page == 0 {
 		err = post.c.Find(nil).Sort(bson.M{"timestamp":-1}).For(&result, callback)
 	} else {
@@ -162,9 +161,9 @@ func (post *PostModel) PostListing(page int) []map[string]string {
 }
 
 func (post *PostModel) Create(title string, content string, status string, markdown uint) {
-	t := time.LocalTime()
-	tmp, _ := strconv.Atoui(status)
-	err := post.c.Insert(&Post{"", title, content, t.Seconds(), 0, tmp, markdown, make([]Comment,0)})
+	t := time.Now()
+	tmp, _ := strconv.ParseUint(status, 10, 64)
+	err := post.c.Insert(&Post{"", title, content, t.Unix(), 0, tmp, markdown, make([]Comment,0)})
 	if err != nil {
 		panic(err)
 	}
@@ -176,11 +175,11 @@ func (post *PostModel) InsertComment(postId string, content string, author strin
 		author = "Anonymous"
 	}
 	// Generate ID
-	t := time.LocalTime()
+	t := time.Now()
 	var h hash.Hash = sha1.New()
-	h.Write([]byte(author+strconv.Itoa64(t.Seconds())))
-	id := hex.EncodeToString(h.Sum())
-	comment := Comment{id, content, author, t.Seconds()}
+	h.Write([]byte(author+strconv.FormatInt(t.Unix(),10)))
+	id := hex.EncodeToString(h.Sum(nil))
+	comment := Comment{id, content, author, t.Unix()}
 	result.Comments = append(result.Comments, comment)
 	err := post.c.Update(bson.M{"_id":bson.ObjectIdHex(postId)},result)
 	if err != nil {
@@ -211,8 +210,8 @@ func (post *PostModel) Update(title string, content string, status string, postI
 	result := post.Get(postId)
 	result.Title = title
 	result.Content = content
-	result.Modified = time.LocalTime().Seconds()
-	result.Status, _ = strconv.Atoui(status)
+	result.Modified = time.Now().Unix()
+	result.Status, _ = strconv.ParseUint(status,0,64)
 	err := post.c.Update(bson.M{"_id":bson.ObjectIdHex(postId)},result)
 	if err != nil {
 		panic(err)

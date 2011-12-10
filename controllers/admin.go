@@ -47,10 +47,10 @@ func (c *Admin) LoginPost(ctx *web.Context) {
 		return
 	}
 	if ctx.Params["username"] == config.Get("adminuser") && ctx.Params["password"] == config.Get("adminpasswd") {
-		t := time.LocalTime()
+		t := time.Now()
 		var h hash.Hash = sha1.New()
-		h.Write([]byte(strconv.Itoa64(t.Seconds())))
-		sessionH.Data["logged"] = hex.EncodeToString(h.Sum())
+		h.Write([]byte(strconv.FormatInt(t.Unix(), 10)))
+		sessionH.Data["logged"] = hex.EncodeToString(h.Sum(nil))
 	}
 	ctx.Redirect(302, "/admin/post/list")
 }

@@ -3,7 +3,6 @@ package main
 import (
 	"launchpad.net/gobson/bson"
 	"launchpad.net/mgo"
-	"os"
 	"time"
 	//"math"
 )
@@ -30,7 +29,7 @@ func PageModelInit() *PageModel {
 func (page *PageModel) Sidebar() []map[string]string {
 	var result *Page
 	results := []map[string]string{}
-	callback := func() os.Error {
+	callback := func() error {
 		results = append(results, map[string]string {"Title": result.Title, "Slug": result.Slug})
 		return nil
 	}
@@ -44,12 +43,12 @@ func (page *PageModel) Sidebar() []map[string]string {
 func (page *PageModel) List() []map[string]string {
 	var result *Page
 	results := []map[string]string{}
-	callback := func() os.Error {
-		t := time.SecondsToLocalTime(result.Created)
+	callback := func() error {
+		t := time.Unix(result.Created, 0)
 		results = append(results, map[string]string {"Title":result.Title, "Date":t.Format("2006 Jan 02 15:04"), "Id": objectIdHex(result.Id.String())})
 		return nil
 	}
-	var err os.Error
+	var err error
 	err = page.c.Find(nil).Sort(bson.M{"timestamp":-1}).For(&result, callback)
 	if err != nil {
 		panic(err)
@@ -58,12 +57,12 @@ func (page *PageModel) List() []map[string]string {
 }
 
 func (page *PageModel) Create(title string, content string) {
-	t := time.LocalTime()
+	t := time.Now()
 	slug := toAscii(title)
 	if page.GetBySlug(slug) != nil {
 		slug += "-2"
 	}
-	err := page.c.Insert(&Page{"", title, slug, content, t.Seconds(), 0})
+	err := page.c.Insert(&Page{"", title, slug, content, t.Unix(), 0})
 	if err != nil {
 		panic(err)
 	}
@@ -81,7 +80,7 @@ func (page *PageModel) Update(title string, content string, id string) {
 	}
 	result.Slug = slug
 	result.Content = content
-	result.Modified = time.LocalTime().Seconds()
+	result.Modified = time.Now().Unix()
 	err := page.c.Update(bson.M{"_id":bson.ObjectIdHex(id)},result)
 	if err != nil {
 		panic(err)

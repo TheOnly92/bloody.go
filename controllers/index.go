@@ -31,7 +31,7 @@ func (c *Index) ReadPost(ctx *web.Context, postId string) string {
 	viewVars := make(map[string]interface{})
 	viewVars["Title"] = result.Title
 	viewVars["Content"] = result.Content
-	viewVars["Date"] = time.SecondsToLocalTime(result.Created).Format(blogConfig.Get("dateFormat"))
+	viewVars["Date"] = time.Unix(result.Created, 0).Format(blogConfig.Get("dateFormat"))
 	viewVars["Id"] = objectIdHex(result.Id.String())
 	// To be used within the {{Comments}} blog
 	viewVars["PostId"] = objectIdHex(result.Id.String())
@@ -56,7 +56,7 @@ func (c *Index) ReadPost(ctx *web.Context, postId string) string {
 	for i, v := range result.Comments {
 		comments = append(comments, map[string]string{
 			"Number": strconv.Itoa(i+1),
-			"Date": time.SecondsToLocalTime(v.Created).Format(blogConfig.Get("dateFormat")),
+			"Date": time.Unix(v.Created, 0).Format(blogConfig.Get("dateFormat")),
 			"Id": v.Id[0:9],
 			"RealId": v.Id,
 			"Content": v.Content,
@@ -90,7 +90,7 @@ func (c *Index) ReadPage(pageSlug string) string {
 	viewVars := make(map[string]string)
 	viewVars["Title"] = result.Title
 	viewVars["Content"] = result.Content
-	viewVars["Date"] = time.SecondsToLocalTime(result.Created).Format(blogConfig.Get("dateFormat"))
+	viewVars["Date"] = time.Unix(result.Created, 0).Format(blogConfig.Get("dateFormat"))
 	
 	output := mustache.RenderFile("templates/view-page.mustache", viewVars)
 	return render(output, result.Title)
