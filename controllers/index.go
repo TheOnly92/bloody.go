@@ -1,7 +1,7 @@
 package main
 
 import (
-	"./mustache"
+	"mustache"
 	"time"
 	"strconv"
 	"web"

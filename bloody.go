@@ -3,7 +3,7 @@ package main
 import (
 	"web"
 	"launchpad.net/mgo"
-	"./mustache"
+	"mustache"
 	"regexp"
 	"./session"
 	"bytes"
