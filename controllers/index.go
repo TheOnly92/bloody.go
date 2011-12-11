@@ -18,6 +18,14 @@ func (c *Index) Index() string {
 	return render(output, "")
 }
 
+func (c *Index) RSS(ctx *web.Context) string {
+	p := PostModelInit()
+	results := p.RSS()
+
+	ctx.ContentType("xml")
+	return mustache.RenderFile("templates/rss.mustache", map[string][]map[string]string {"posts":results})
+}
+
 func (c *Index) NewComment(ctx *web.Context, postId string) {
 	p := PostModelInit()
 	p.InsertComment(postId,ctx.Params["comment"],ctx.Params["author"])

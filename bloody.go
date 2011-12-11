@@ -138,5 +138,6 @@ func main() {
 	web.Get("/admin/page/del/(.*)", web.MethodHandler(a, "DelPage"))
 	web.Get("/admin/comment/del/(.*)/(.*)", web.MethodHandler(a, "DelComment"))
 	web.Get("/admin/bloody/restart", web.MethodHandler(a, "RestartBloody"))
+	web.Get("/rss", web.MethodHandler(i, "RSS"))
 	web.Run(config.Get("host")+":"+config.Get("port"))
 }

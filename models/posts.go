@@ -73,6 +73,25 @@ func (post *PostModel) FrontPage() []map[string]string {
 	return results
 }
 
+func (post *PostModel) RSS() []map[string]string {
+	var result *Post
+	results := []map[string]string{}
+	err := post.c.Find(bson.M{"status":1}).Sort(bson.M{"timestamp":-1}).Limit(20).For(&result, func() error {
+		t := time.Unix(result.Created, 0)
+		if result.Type == 1 {
+			renderer := blackfriday.HtmlRenderer(post.html_flags,"","")
+			result.Content = string(blackfriday.Markdown([]byte(result.Content), renderer, post.extensions))
+		}
+		results = append(results, map[string]string {"Title":result.Title, "Content":result.Content, "Date":t.Format(time.RFC1123), "Id": objectIdHex(result.Id.String())})
+		return nil
+	})
+	if err != nil {
+		panic(err)
+	}
+	
+	return results
+}
+
 func (post *PostModel) RenderPost(postId string) *Post {
 	result := post.Get(postId)
 	renderer := blackfriday.HtmlRenderer(post.html_flags,"","")

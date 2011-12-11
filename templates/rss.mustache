@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0">
+	<channel>
+		<atom:link rel="hub" href="http://tumblr.superfeedr.com/" xmlns:atom="http://www.w3.org/2005/Atom"/>
+		{{#posts}}
+		<item>
+			<title>{{Title}}</title>
+			<description>{{Content}}</description>
+			<link>/post/{{Id}}</link>
+			<guid>/post/{{Id}}</guid>
+			<pubDate>{{Date}}</pubDate>
+		</item>
+		{{/posts}}
+	</channel>
+</rss>
