@@ -7,6 +7,7 @@ import (
 	"regexp"
 	"./session"
 	"bytes"
+	"os"
 )
 
 type User struct {
@@ -108,7 +109,8 @@ func main() {
 	h = new(session.MHandler)
 	h.SetSession(mSession)
 	blogConfig = PreferenceInit()
-	web.Config.StaticDir = config.Get("staticdir")
+	path, _ := os.Getwd()
+	web.Config.StaticDir = path + "/" + config.Get("staticdir")
 	i := &Index{}
 	a := &Admin{}
 	web.Get("/", web.MethodHandler(i, "Index"))

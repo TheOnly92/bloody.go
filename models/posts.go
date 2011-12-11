@@ -13,7 +13,7 @@ import (
 )
 
 type Post struct {
-	Id			bson.ObjectId "_id/c"
+	Id			bson.ObjectId "_id,omitempty"
 	Title		string
 	Content		string
 	Created		int64 "timestamp"
