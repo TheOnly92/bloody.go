@@ -5,7 +5,7 @@ import (
 	"time"
 	"strconv"
 	"web"
-	"./session"
+	"session"
 )
 
 type Index struct {}

@@ -4,7 +4,7 @@ import (
 	"mustache"
 	"time"
 	"web"
-	"./session"
+	"session"
 	"crypto/sha1"
 	"hash"
 	"strconv"

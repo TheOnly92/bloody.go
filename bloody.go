@@ -5,7 +5,7 @@ import (
 	"launchpad.net/mgo"
 	"mustache"
 	"regexp"
-	"./session"
+	"session"
 	"bytes"
 	"os"
 )
