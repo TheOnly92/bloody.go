@@ -52,7 +52,7 @@ func (c *Admin) LoginGet(ctx *web.Context) string {
 		return ""
 	}
 	output := mustache.RenderFile("templates/admin/login.mustache")
-	return c.render(output, "Login")
+	return render(output, "Login")
 }
 
 func (c *Admin) LoginPost(ctx *web.Context) {
