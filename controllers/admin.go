@@ -17,6 +17,22 @@ import (
 
 type Admin struct {}
 
+func (c *Admin) render(output string, title string) string {
+	template, err := mustache.ParseFile("templates/admin/layout.mustache")
+	if err != nil {
+		panic(err)
+	}
+	vars := make(map[string]interface{})
+	vars["Body"] = output
+	if title != "" {
+		vars["Title"] = map[string]string {"Name": title}
+	}
+	if blogConfig.Get("markdown") == "1" {
+		vars["markdown"] = "1"
+	}
+	return template.Render(vars)
+}
+
 func (c *Admin) IndexGet(ctx *web.Context) string {
 	sessionH := session.Start(ctx, h)
 	defer sessionH.Save()
@@ -36,7 +52,7 @@ func (c *Admin) LoginGet(ctx *web.Context) string {
 		return ""
 	}
 	output := mustache.RenderFile("templates/admin/login.mustache")
-	return render(output, "Login")
+	return c.render(output, "Login")
 }
 
 func (c *Admin) LoginPost(ctx *web.Context) {
@@ -72,7 +88,7 @@ func (c *Admin) PreferencesGet(ctx *web.Context) string {
 		vars["markdown"] = "1"
 	}
 	output := mustache.RenderFile("templates/admin/preferences.mustache", vars)
-	return render(output, "Blog Preferernces")
+	return c.render(output, "Blog Preferernces")
 }
 
 func (c *Admin) PreferencesPost(ctx *web.Context) {
@@ -107,7 +123,7 @@ func (c *Admin) NewPostGet(ctx *web.Context) string {
 	} else {
 		output = mustache.RenderFile("templates/admin/new-post.mustache")
 	}
-	return render(output, "New Post")
+	return c.render(output, "New Post")
 }
 
 func (c *Admin) NewPostPost(ctx *web.Context) {
@@ -142,12 +158,9 @@ func (c *Admin) ListPost(ctx *web.Context) string {
 	results := p.PostListing(page)
 	
 	vars := map[string]interface{} {"posts":results}
-	if blogConfig.Get("markdown") == "1" {
-		vars["markdown"] = "1"
-	}
 	
 	output := mustache.RenderFile("templates/admin/list-post.mustache", vars)
-	return render(output, "List Posts")
+	return c.render(output, "List Posts")
 }
 
 func (c *Admin) EditPostGet(ctx *web.Context, postId string) string {
@@ -174,7 +187,7 @@ func (c *Admin) EditPostGet(ctx *web.Context, postId string) string {
 		output = mustache.RenderFile("templates/admin/edit-post.mustache", templateVars)
 	}
 	
-	return render(output, "Edit Post")
+	return c.render(output, "Edit Post")
 }
 
 func (c *Admin) EditPostPost(ctx *web.Context, postId string) {
@@ -229,7 +242,7 @@ func (c *Admin) NewPageGet(ctx *web.Context) string {
 		return ""
 	}
 	output := mustache.RenderFile("templates/admin/new-page.mustache")
-	return render(output, "New Page")
+	return c.render(output, "New Page")
 }
 
 func (c *Admin) NewPagePost(ctx *web.Context) {
@@ -254,8 +267,8 @@ func (c *Admin) ListPagesGet(ctx *web.Context) string {
 	p := PageModelInit()
 	results := p.List()
 	
-	output := mustache.RenderFile("templates/list-pages.mustache", map[string][]map[string]string {"pages":results})
-	return render(output, "List Pages")
+	output := mustache.RenderFile("templates/admin/list-pages.mustache", map[string][]map[string]string {"pages":results})
+	return c.render(output, "List Pages")
 }
 
 func (c *Admin) EditPageGet(ctx *web.Context, id string) string {
@@ -269,7 +282,7 @@ func (c *Admin) EditPageGet(ctx *web.Context, id string) string {
 	result := p.Get(id)
 	
 	output := mustache.RenderFile("templates/admin/edit-page.mustache", map[string]string {"Title":result.Title, "Content":result.Content, "id":objectIdHex(result.Id.String())})
-	return render(output, "Edit Post")
+	return c.render(output, "Edit Post")
 }
 
 func (c *Admin) EditPagePost(ctx *web.Context, id string) {
@@ -328,5 +341,5 @@ func (c *Admin) RestartBloody(ctx *web.Context) string {
 	command1.Start()
 	
 	output := mustache.RenderFile("templates/admin/restart.mustache")
-	return render(output, "Restarting Bloody")
+	return c.render(output, "Restarting Bloody")
 }

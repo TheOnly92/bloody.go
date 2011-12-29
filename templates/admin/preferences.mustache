@@ -1,13 +1,28 @@
-<h1>Preferences</h1>
-<form method="post" action="/admin/preferences">
-	<label for="dateFormat">Date Format</label>
-	<input type="text" id="dateFormat" name="dateFormat" style="width: 300px" value="{{DateFormat}}" /><br />
-	<label for="postsPerPage"><abbr title="Posts Per Page">PPP</abbr></label>
-	<input type="text" id="postsPerPage" name="postsPerPage" style="width: 300px" value="{{PostsPerPage}}" /><br />
-	<label for="enableComment">Comment?</label>
-	<input type="checkbox" id="enableComment" name="enableComment"{{#EnableComment}} checked="checked"{{/EnableComment}} /><br />
-	<label for="markdown">Markdown?</label>
-	<input type="checkbox" id="markdown" name="markdown"{{#markdown}} checked="checked"{{/markdown}} />
-	<br />
-	<input type="submit" value="Save!" />
-</form>
+<article class="module width_full">
+	<header><h3>Preferences</h3></header>
+	<form method="post" action="/admin/preferences">
+	<div class="module_content">
+		<fieldset>
+			<label for="dateFormat">Date Format</label>
+			<input type="text" id="dateFormat" name="dateFormat" style="width: 300px" value="{{DateFormat}}" />
+		</fieldset>
+		<fieldset>
+			<label for="postsPerPage"><abbr title="Posts Per Page">PPP</abbr></label>
+			<input type="text" id="postsPerPage" name="postsPerPage" style="width: 300px" value="{{PostsPerPage}}" />
+		</fieldset>
+		<fieldset>
+			<label for="enableComment">Comment?</label>
+			<input type="checkbox" id="enableComment" name="enableComment"{{#EnableComment}} checked="checked"{{/EnableComment}} />
+		</fieldset>
+		<fieldset>
+			<label for="markdown">Markdown?</label>
+			<input type="checkbox" id="markdown" name="markdown"{{#markdown}} checked="checked"{{/markdown}} />
+		</fieldset>
+	</div>
+	<footer>
+		<div class="submit_link">
+			<input type="submit" value="Save!" />
+		</div>
+	</footer>
+	</form>
+</article>

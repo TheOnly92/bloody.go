@@ -1,18 +1,33 @@
-<h1>Edit Post</h1>
-<form method="post" action="/admin/post/edit/{{id}}">
-	<label for="title">Title</label>
-	<input type="text" id="title" name="title" value="{{Title}}" style="width: 300px" /><br />
-	<label for="content">Content</label>
-	<div style="clear: both"></div>
-	<textarea id="content" name="content">{{Content}}</textarea><br />
-	<label for="status">Status</label>
-	<select name="status" id="status">
-		<option value="0"{{#Draft}} selected="selected"{{/Draft}}>Draft</option>
-		<option value="1"{{#Publish}} selected="selected"{{/Publish}}>Published</option>
-	</select>
-	<br />
-	<input type="submit" value="Save!" />
-</form>
+<article class="module width_full">
+	<header><h3>Edit Post</h3></header>
+	<form method="post" action="/admin/post/edit/{{id}}">
+	<div class="module_content">
+		<fieldset>
+			<label for="title">Title</label>
+			<input type="text" id="title" name="title" value="{{Title}}" />
+		</fieldset>
+		<fieldset>
+			<label for="content">Content</label>
+			<div style="clear: both"></div>
+			<textarea id="content" name="content" style="height: 200px;">{{Content}}</textarea>
+		</fieldset>
+	</div>
+	<footer>
+		<div class="submit_link">
+			<select name="status" id="status">
+				<option value="0"{{#Draft}} selected="selected"{{/Draft}}>Draft</option>
+				<option value="1"{{#Publish}} selected="selected"{{/Publish}}>Published</option>
+			</select>
+			<input type="submit" value="Post!" />
+		</div>
+	</footer>
+	</form>
+</article>
 <script type="text/javascript">
 $('#content').cleditor()[0].focus();
 </script>
+<style>
+.cleditorMain {
+	margin: 0 10px;
+}
+</style>

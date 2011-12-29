@@ -1,11 +1,20 @@
-<h1>List of Your Pages</h1>
-<p>[ <a href="/admin/page/new">New Page</a> ]</p>
-<table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size: 13px;">
-	{{#pages}}
-	<tr>
-		<td style="width: 130px">{{Date}}</td>
-		<td><a href="/admin/page/edit/{{Id}}">{{Title}}</a></td>
-		<td>[ <a href="/admin/page/del/{{Id}}">Del</a> ]</td>
-	</tr>
-	{{/pages}}
-</table>
+<article class="module width_full">
+	<header><h3>Pages</h3></header>
+	<table cellpadding="0" cellspacing="0" border="0" style="width: 100%; font-size: 13px;" class="tablesorter">
+		<thead>
+			<tr>
+				<th style="width: 25px;"></th>
+				<th>Created On</th>
+				<th>Title</th>
+				<th width="100px;">Actions</th>
+			</tr>
+		</thead>
+		{{#posts}}
+		<tr>
+			<td style="width: 130px">{{Date}}</td>
+			<td><a href="/admin/page/edit/{{Id}}">{{Title}}</a>{{#Draft}} - Draft{{/Draft}}</td>
+			<td><a href="/admin/page/edit/{{Id}}"></a><input type="image" src="/admin/images/icn_edit.png" title="Edit"><a href="/admin/page/del/{{Id}}"><input type="image" src="/admin/images/icn_trash.png" title="Trash"></a></td>
+		</tr>
+		{{/posts}}
+	</table>
+</article>

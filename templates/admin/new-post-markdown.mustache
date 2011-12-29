@@ -1,15 +1,24 @@
-<h1>Create New Post</h1>
-<form method="post" action="/admin/post/new?markdown=1">
-	<label for="title">Title</label>
-	<input type="text" id="title" name="title" style="width: 300px" /><br />
-	<label for="content">Content</label>
-	<div style="clear: both"></div>
-	<textarea id="content" name="content" style="width: 100%; height: 200px; padding: 3px 5px; margin: 5px 0;"></textarea><br />
-	<label for="status">Status</label>
-	<select name="status" id="status">
-		<option value="0" selected="selected">Draft</option>
-		<option value="1">Published</option>
-	</select>
-	<br />
-	<input type="submit" value="Post!" />
-</form>
+<article class="module width_full">
+	<header><h3>Create New Post</h3></header>
+	<form method="post" action="/admin/post/new?markdown=1">
+	<div class="module_content">
+		<fieldset>
+			<label for="title">Title</label>
+			<input type="text" id="title" name="title" />
+		</fieldset>
+		<fieldset>
+			<label for="content">Content</label>
+			<textarea id="content" name="content" style="height: 200px;"></textarea>
+		</fieldset>
+	</div>
+	<footer>
+		<div class="submit_link">
+			<select name="status" id="status">
+				<option value="0" selected="selected">Draft</option>
+				<option value="1">Published</option>
+			</select>
+			<input type="submit" value="Post!" />
+		</div>
+	</footer>
+	</form>
+</article>
