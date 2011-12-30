@@ -19,6 +19,7 @@ var mSession *mgo.Session
 var mongoInit = false
 var h *session.MHandler
 var config *Config
+var layoutChanged int64
 
 var layout *mustache.Template
 
@@ -32,7 +33,20 @@ func initMongo() {
 	}
 }
 
+func getLayoutChanged() int64 {
+	dir, _ := os.Getwd()
+	f, err := os.Open(dir+"/templates/layout.mustache")
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+
+	info, _ := f.Stat()
+	return info.ModTime().Unix()
+}
+
 func initLayout() {
+	layoutChanged = getLayoutChanged()
 	layout, _ = mustache.ParseFile("templates/layout.mustache")
 }
 
@@ -44,6 +58,13 @@ func render(output string, title string) string {
 	}
 	p := PageModelInit()
 	vars["SidePages"] = p.Sidebar()
+
+	// Check if layout is changed
+	if getLayoutChanged() != layoutChanged {
+		layoutChanged = getLayoutChanged()
+		layout, _ = mustache.ParseFile("templates/layout.mustache")
+	}
+
 	return layout.Render(vars)
 }
 
